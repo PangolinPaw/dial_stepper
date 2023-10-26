@@ -34,6 +34,11 @@ Rotary encoders        Raspberry Pi           Motor controllers        Stepper m
 - [Motor controllers](https://thepihut.com/products/adafruit-dc-stepper-motor-hat-for-raspberry-pi-mini-kit?variant=27739845393)
 - [Stepper motors](https://thepihut.com/products/stepper-motor-nema-17-size-200-steps-rev-12v-350ma?variant=27740390929)
 
+## Libraries & resources
+
+- [Tracking the position of the rotary encoders](https://github.com/modmypi/Rotary-Encoder/blob/master/rotary_encoder.py)
+- [Adafruit motor controller library](https://learn.adafruit.com/adafruit-dc-and-stepper-motor-hat-for-raspberry-pi/using-stepper-motors)
+
 ## Logic
 
 - Dial turned X steps in Y direction
