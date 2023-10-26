@@ -36,3 +36,20 @@ Rotary encoders        Raspberry Pi           Motor controllers        Stepper m
 
 ## Logic
 
+- Dial turned X steps in Y direction
+- Calculate new dial position P
+- Covnert P to motor target position T
+- Send signal to rotate motor in direction Y until T reached
+
+## Things to consider
+
+### Lag
+
+There will be a lag between the dial turning & the motor reaching the corresponding position. This is especially true since the dial will have a fairly large diameter so the users will be able to spin the encoder quite far with minimal effort.
+
+How should the system respond if the users move the dial to a new position before the motor has reached the previous target position?
+
+Options:
+1. Queue positions and move to each one in sequence
+2. Cancel movement & start moving to new target position
+
