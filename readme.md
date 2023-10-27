@@ -65,3 +65,7 @@ The rotary encoders have 24 steps and the motors have 200. 1 step on the dial sh
 ### Gear ratios
 
 The disks mounted to the motors may be too heavy to rotate with a 1:1 ratio. A belt from the motor hub to the outer rim of the wheel could address this, but it would mean that the dial-to-motor step relationship would need to be adjusted.
+
+### Initial position
+
+The rotary encoders and stepper motors can't report their positions, just when a step is taken and it's direction. This means that we must make sure the motors start in a known initial position when the machine is powered on. A physical lock of some sort might be a good way to ensure this.
