@@ -27,7 +27,7 @@ def convert(dial):
     return motor
 
 def dial():
-    global DIAL_A
+    global DIAL_A, DIAL_B
     clk_A_last_state = GPIO.input(clk_A)
     clk_B_last_state = GPIO.input(clk_B)
     while True:
@@ -48,19 +48,18 @@ def dial():
             dt_B_state = GPIO.input(dt_B)
             if clk_B_state != clk_B_last_state:
                 if dt_B_state != clk_B_state:
-                    DIBL_B += 1
-                    if DIBL_B > 23:
-                        DIBL_B = 0
+                    DIAL_B += 1
+                    if DIAL_B > 23:
+                        DIAL_B = 0
                 else:
-                    DIBL_B -= 1
-                    if DIBL_B < 0:
-                        DIBL_B = 23
+                    DIAL_B -= 1
+                    if DIAL_B < 0:
+                        DIAL_B = 23
                 clk_B_last_state = clk_B_state
-            
         time.sleep(0.01)
 
 def motor(interrupt):
-    global MOTOR_A
+    global MOTOR_A, MOTOR_B
     while True:
         os.system('clear')
         print()
