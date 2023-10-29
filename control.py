@@ -44,18 +44,18 @@ def dial():
                     DIAL_A = 23
             clk_A_last_state = clk_A_state
 
-            clk_B_state = GPIO.input(clk_B)
-            dt_B_state = GPIO.input(dt_B)
-            if clk_B_state != clk_B_last_state:
-                if dt_B_state != clk_B_state:
-                    DIAL_B += 1
-                    if DIAL_B > 23:
-                        DIAL_B = 0
-                else:
-                    DIAL_B -= 1
-                    if DIAL_B < 0:
-                        DIAL_B = 23
-                clk_B_last_state = clk_B_state
+        clk_B_state = GPIO.input(clk_B)
+        dt_B_state = GPIO.input(dt_B)
+        if clk_B_state != clk_B_last_state:
+            if dt_B_state != clk_B_state:
+                DIAL_B += 1
+                if DIAL_B > 23:
+                    DIAL_B = 0
+            else:
+                DIAL_B -= 1
+                if DIAL_B < 0:
+                    DIAL_B = 23
+            clk_B_last_state = clk_B_state
         time.sleep(0.01)
 
 def motor(interrupt):
