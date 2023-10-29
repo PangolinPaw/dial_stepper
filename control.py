@@ -1,6 +1,11 @@
 import os
 import time
 import threading
+from RPi import GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # CLK
+GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # DT
 
 DIAL_POSITION = 0
 MOTOR_POSITION = 0
@@ -16,16 +21,23 @@ def dial():
         print()
         print(f' DIAL_POSITION:  {str(DIAL_POSITION).rjust(3)}')
         print(f' MOTOR_POSITION: {str(MOTOR_POSITION).rjust(3)}')
-        direction = input(' Turn Clockwise or Anticlockwise? ')
-        if len(direction) > 0:
-            if direction[0].upper() == 'C':
-                DIAL_POSITION += 1
-                if DIAL_POSITION > 23:
-                    DIAL_POSITION = 0
-            elif direction[0].upper() == 'A':
-                DIAL_POSITION -= 1
-                if DIAL_POSITION < 0:
-                    DIAL_POSITION = 23
+        
+        clkLastState = GPIO.input(clk)
+        while True:
+            clkState = GPIO.input(clk)
+            dtState = GPIO.input(dt)
+            if clkState != clkLastState:
+                if dtState != clkState:
+                    DIAL_POSITION += 1
+                    if DIAL_POSITION > 23:
+                        DIAL_POSITION = 0
+                else:
+                    DIAL_POSITION -= 1
+                    if DIAL_POSITION < 0:
+                        DIAL_POSITION = 23
+            clkLastState = clkState
+            sleep(0.01)
+    
 
 def motor(interrupt):
     global MOTOR_POSITION
@@ -48,8 +60,8 @@ def main():
     motor_thread.start()
     try:
         dial()
-    except KeyboardInterrupt:
-        interrupt.set()
+    finally:
+        GPIO.cleanup()
 
 
 if __name__ == '__main__':
