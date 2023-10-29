@@ -17,11 +17,11 @@ def convert(dial):
 def dial():
     global DIAL_POSITION
     while True:
-        os.system('cls')
+        os.system('clear')
         print()
         print(f' DIAL_POSITION:  {str(DIAL_POSITION).rjust(3)}')
         print(f' MOTOR_POSITION: {str(MOTOR_POSITION).rjust(3)}')
-        
+
         clkLastState = GPIO.input(clk)
         while True:
             clkState = GPIO.input(clk)
@@ -37,7 +37,6 @@ def dial():
                         DIAL_POSITION = 23
             clkLastState = clkState
             sleep(0.01)
-    
 
 def motor(interrupt):
     global MOTOR_POSITION
