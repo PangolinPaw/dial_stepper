@@ -39,7 +39,7 @@ def dial():
                     if DIAL_POSITION < 0:
                         DIAL_POSITION = 23
             clkLastState = clkState
-            sleep(0.01)
+            time.sleep(0.01)
 
 def motor(interrupt):
     global MOTOR_POSITION
