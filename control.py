@@ -4,7 +4,7 @@ import threading
 from RPi import GPIO
 
 dt = 18
-clk = 18
+clk = 17
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # CLK
@@ -19,25 +19,25 @@ def convert(dial):
 
 def dial():
     global DIAL_POSITION
+    clkLastState = GPIO.input(clk)
     while True:
         os.system('clear')
         print()
         print(f' DIAL_POSITION:  {str(DIAL_POSITION).rjust(3)}')
         print(f' MOTOR_POSITION: {str(MOTOR_POSITION).rjust(3)}')
 
-        clkLastState = GPIO.input(clk)
-        while True:
-            clkState = GPIO.input(clk)
-            dtState = GPIO.input(dt)
-            if clkState != clkLastState:
-                if dtState != clkState:
-                    DIAL_POSITION += 1
-                    if DIAL_POSITION > 23:
-                        DIAL_POSITION = 0
-                else:
-                    DIAL_POSITION -= 1
-                    if DIAL_POSITION < 0:
-                        DIAL_POSITION = 23
+        clkState = GPIO.input(clk)
+        dtState = GPIO.input(dt)
+        if clkState != clkLastState:
+#            print(f' {dtState = }, {clkState = }')
+            if dtState != clkState:
+                DIAL_POSITION += 1
+                if DIAL_POSITION > 23:
+                    DIAL_POSITION = 0
+            else:
+                DIAL_POSITION -= 1
+                if DIAL_POSITION < 0:
+                    DIAL_POSITION = 23
             clkLastState = clkState
             time.sleep(0.01)
 
