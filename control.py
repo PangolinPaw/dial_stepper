@@ -3,9 +3,12 @@ import time
 import threading
 from RPi import GPIO
 
+dt = 18
+clk = 18
+
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # CLK
-GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # DT
+GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # CLK
+GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # DT
 
 DIAL_POSITION = 0
 MOTOR_POSITION = 0
