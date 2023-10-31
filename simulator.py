@@ -29,6 +29,7 @@ def init():
     pygame.init()
     pygame.font.init()
     FONT = pygame.font.Font(f'{THIS_DIRECTORY}assets{os.sep}roboto.ttf', 18)
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     COLOURS = {
         'black':    ( 27,  40,  50),
         'white':    (255, 255, 255),
@@ -40,10 +41,14 @@ def init():
     }
     IMAGES = {
         'logo':   pygame.image.load('assets/logo.png'),
-        'disk_a': pygame.image.load('assets/disk_a.png'),
-        'disk_b': pygame.image.load('assets/disk_b.png'),
-        'disk_c': pygame.image.load('assets/disk_c.png')
+        'disk_a': pygame.image.load('assets/disk_a.png').convert_alpha(),
+        'dial_a': pygame.image.load('assets/dial_a.png').convert_alpha(),
+        'disk_b': pygame.image.load('assets/disk_b.png').convert_alpha(),
+        'dial_b': pygame.image.load('assets/dial_b.png').convert_alpha(),
+        'disk_c': pygame.image.load('assets/disk_c.png').convert_alpha(),
+        'dial_c': pygame.image.load('assets/dial_c.png').convert_alpha()
     }
+    return screen
 
 def rotate_image(surf, image, pos, originPos, angle):
     # from https://stackoverflow.com/a/54714144/12825882
@@ -57,9 +62,10 @@ def rotate_image(surf, image, pos, originPos, angle):
   
 
 def draw_dials(screen):
+    w, h = IMAGES['dial_a'].get_size()
     dial_a = pygame.draw.circle(
         screen,
-        COLOURS['primary'],
+        COLOURS['white'],
         (
             250,                # left
             SCREEN_HEIGHT - 75 # top
@@ -67,10 +73,21 @@ def draw_dials(screen):
         50,                      # radius
         0                        # border thickness (0 = filled)
     )
+    rotate_image(
+        screen,
+        IMAGES['dial_a'],
+        (
+            250,
+            520,
+            
+        ),
+        (int(w/2), int(h/2)),
+        DIAL_POSITIONS['a']
+    )
 
     dial_b = pygame.draw.circle(
         screen,
-        COLOURS['primary'],
+        COLOURS['white'],
         (
             int(round(SCREEN_WIDTH / 2, 0)),
             SCREEN_HEIGHT - 75 
@@ -78,10 +95,21 @@ def draw_dials(screen):
         50,
         0
     )
+    rotate_image(
+        screen,
+        IMAGES['dial_b'],
+        (
+            395,
+            520,
+            
+        ),
+        (int(w/2), int(h/2)),
+        DIAL_POSITIONS['b']
+    )
 
     dial_c = pygame.draw.circle(
         screen,
-        COLOURS['primary'],
+        COLOURS['white'],
         (
             int(round(SCREEN_WIDTH / 2, 0)) + 150,
             SCREEN_HEIGHT - 75 
@@ -89,10 +117,28 @@ def draw_dials(screen):
         50,
         0
     )
+    rotate_image(
+        screen,
+        IMAGES['dial_c'],
+        (
+            550,
+            520,
+            
+        ),
+        (int(w/2), int(h/2)),
+        DIAL_POSITIONS['c']
+    )
     return dial_a, dial_b, dial_c
 
 def draw_discs(screen):
+
+    if MOTOR_POSITIONS['a'] > DIAL_POSITIONS['a']:
+        MOTOR_POSITIONS['a'] -= 1.8
+    if MOTOR_POSITIONS['a'] < DIAL_POSITIONS['a']:
+        MOTOR_POSITIONS['a'] += 1.8
+        
     w, h = IMAGES['disk_a'].get_size()
+
     rotate_image(
         screen,
         IMAGES['disk_a'],
@@ -102,20 +148,53 @@ def draw_discs(screen):
             
         ),
         (int(w/2), int(h/2)),
-        DIAL_POSITIONS['a']
+        MOTOR_POSITIONS['a']
+    )
+
+    if MOTOR_POSITIONS['b'] > DIAL_POSITIONS['b']:
+        MOTOR_POSITIONS['b'] -= 1.8
+    if MOTOR_POSITIONS['b'] < DIAL_POSITIONS['b']:
+        MOTOR_POSITIONS['b'] += 1.8
+    rotate_image(
+        screen,
+        IMAGES['disk_b'],
+        (
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2,
+            
+        ),
+        (int(w/2), int(h/2)),
+        MOTOR_POSITIONS['b']
+    )
+
+    if MOTOR_POSITIONS['c'] > DIAL_POSITIONS['c']:
+        MOTOR_POSITIONS['c'] -= 1.8
+    if MOTOR_POSITIONS['c'] < DIAL_POSITIONS['c']:
+        MOTOR_POSITIONS['c'] += 1.8
+    rotate_image(
+        screen,
+        IMAGES['disk_c'],
+        (
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2,
+            
+        ),
+        (int(w/2), int(h/2)),
+        MOTOR_POSITIONS['c']
     )
 
 
 def main():
     global DIAL_POSITIONS
-    init()
+    screen = init()
     pygame.display.set_icon(IMAGES['logo'])
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    
     pygame.display.set_caption(f'Control Simulator | v{VERSION}')
     clock = pygame.time.Clock()
 
-    lmb_pressed = False
-    rmb_pressed = False
+    turn_a = None
+    turn_b = None
+    turn_c = None
     running = True
     while running:
         screen.fill(COLOURS['white'])
@@ -132,36 +211,91 @@ def main():
             )
         )
 
+        # Disks
+        draw_discs(screen)
+
+        # Disk text
+        position = str(int(round(MOTOR_POSITIONS['a'] / 1.8,0)))
+        text_width, _ = FONT.size(position)
+        screen.blit(
+            FONT.render(
+                position,
+                True,
+                COLOURS['black']
+            ),
+            (
+                (SCREEN_WIDTH / 2 - text_width / 2) - 25,
+                SCREEN_HEIGHT / 2 - 150
+            )
+        )
+        position = str(int(round(MOTOR_POSITIONS['b'] / 1.8,0)))
+        text_width, _ = FONT.size(position)
+        screen.blit(
+            FONT.render(
+                position,
+                True,
+                COLOURS['black']
+            ),
+            (
+                SCREEN_WIDTH / 2 - text_width / 2,
+                (SCREEN_HEIGHT / 2 - 150) - 25
+            )
+        )
+        position = str(int(round(MOTOR_POSITIONS['c'] / 1.8,0)))
+        text_width, _ = FONT.size(position)
+        screen.blit(
+            FONT.render(
+                position,
+                True,
+                COLOURS['black']
+            ),
+            (
+                (SCREEN_WIDTH / 2 - text_width / 2) + 25,
+                (SCREEN_HEIGHT / 2 - 150) - 50
+            )
+        )
+
         # Dials
         dial_a, dial_b, dial_c = draw_dials(screen)
 
         # Dial text
-
-
-        # Disks
-        draw_discs(screen)
-
-        # Debug buttons
-        reset = pygame.draw.rect(
-            screen,
-            COLOURS['primary'],         # colour
-            pygame.Rect(
-                SCREEN_WIDTH - 100,     # left
-                SCREEN_HEIGHT - 80,     # top
-                75,                     # width
-                30                      # height
-            )
-        )
-        text_width, text_height = FONT.size('RESET')
+        position = str(int(DIAL_POSITIONS['a'] / 15))
+        text_width, _ = FONT.size(position)
         screen.blit(
             FONT.render(
-                'RESET',
+                position,
                 True,
-                COLOURS['white']
+                COLOURS['black']
             ),
             (
-                SCREEN_WIDTH - 90,
-                SCREEN_HEIGHT - 75
+                250 - text_width / 2,
+                450
+            )
+        )
+        position = str(int(DIAL_POSITIONS['b'] / 15))
+        text_width, _ = FONT.size(position)
+        screen.blit(
+            FONT.render(
+                position,
+                True,
+                COLOURS['black']
+            ),
+            (
+                395 - text_width / 2,
+                450
+            )
+        )
+        position = str(int(DIAL_POSITIONS['c'] / 15))
+        text_width, _ = FONT.size(position)
+        screen.blit(
+            FONT.render(
+                position,
+                True,
+                COLOURS['black']
+            ),
+            (
+                550 - text_width / 2,
+                450
             )
         )
 
@@ -169,18 +303,48 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                lmb_pressed = True
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                lmb_pressed = False
-
-            if lmb_pressed:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    direction = 'counterclocwise'
+                else:
+                    direction = 'clockwise'
                 if dial_a.collidepoint(event.pos):
-                    DIAL_POSITIONS['a'] += 1
+                    turn_a = direction
                 if dial_b.collidepoint(event.pos):
-                    DIAL_POSITIONS['b'] += 1
+                    turn_b = direction
                 if dial_c.collidepoint(event.pos):
-                    DIAL_POSITIONS['c'] += 1
+                    turn_c = direction
+            if event.type == pygame.MOUSEBUTTONUP:
+                turn_a = None
+                turn_b = None
+                turn_c = None
+
+        if turn_a == 'clockwise':
+            DIAL_POSITIONS['a'] -= 15 # 360 deg / 24 steps = 15 deg
+            if DIAL_POSITIONS['a'] < 0:
+                DIAL_POSITIONS['a'] = 360 - 15
+        elif turn_a == 'counterclocwise':
+            DIAL_POSITIONS['a'] += 15
+            if DIAL_POSITIONS['a'] >= 360:
+                DIAL_POSITIONS['a'] = 0
+
+        if turn_b == 'clockwise':
+            DIAL_POSITIONS['b'] -= 15 # 360 deg / 24 steps = 15 deg
+            if DIAL_POSITIONS['b'] < 0:
+                DIAL_POSITIONS['b'] = 360 - 15
+        elif turn_b == 'counterclocwise':
+            DIAL_POSITIONS['b'] += 15
+            if DIAL_POSITIONS['b'] >= 360:
+                DIAL_POSITIONS['b'] = 0
+
+        if turn_c == 'clockwise':
+            DIAL_POSITIONS['c'] -= 15 # 360 deg / 24 steps = 15 deg
+            if DIAL_POSITIONS['c'] < 0:
+                DIAL_POSITIONS['c'] = 360 - 15
+        elif turn_c == 'counterclocwise':
+            DIAL_POSITIONS['c'] += 15
+            if DIAL_POSITIONS['c'] >= 360:
+                DIAL_POSITIONS['c'] = 0
 
         pygame.display.flip()
         clock.tick(10)
