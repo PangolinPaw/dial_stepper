@@ -2,6 +2,7 @@ import os
 import time
 import threading
 from adafruit_motorkit import MotorKit
+from adafruit_motor import stepper
 import board
 from RPi import GPIO
 
@@ -78,7 +79,7 @@ def motor(interrupt):
             )
         elif MOTOR_A > convert(DIAL_A):
             MOTOR_A -=1
-             kit.stepper1.onestep(
+            kit.stepper1.onestep(
                 direction=stepper.BACKWARD
             )
         if MOTOR_B < convert(DIAL_B):
@@ -88,8 +89,6 @@ def motor(interrupt):
 
         if interrupt.is_set():
             break
-        else:
-            time.sleep(0.25)
 
 def main():
     interrupt = threading.Event()
