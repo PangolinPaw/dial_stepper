@@ -1,8 +1,11 @@
 import os
 import time
 import threading
+from adafruit_motorkit import MotorKit
+import board
 from RPi import GPIO
 
+kit = MotorKit(i2c=board.I2C())
 GPIO.setmode(GPIO.BCM)
 
 # Dial A, first from left
@@ -70,9 +73,14 @@ def motor(interrupt):
 
         if MOTOR_A < convert(DIAL_A):
             MOTOR_A += 1
+            kit.stepper1.onestep(
+                direction=stepper.FORWARD
+            )
         elif MOTOR_A > convert(DIAL_A):
             MOTOR_A -=1
-
+             kit.stepper1.onestep(
+                direction=stepper.BACKWARD
+            )
         if MOTOR_B < convert(DIAL_B):
             MOTOR_B += 1
         elif MOTOR_B > convert(DIAL_B):
