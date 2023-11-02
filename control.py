@@ -144,6 +144,48 @@ def move_motors(interrupt):
         if interrupt.is_set():
             break
 
+def move_motors(interrupt):
+    '''Monitor values of DIAL_* variables and turn motors to match. Runs in a
+    separate thread to the input functions to avoid blocking while rotation in progress'''
+    global MOTORS
+    while True:
+        os.system('clear')
+        print()
+        print(f'    | DIAL | MOTOR |')
+        print(f' ---|------|-------|')
+        for motor in MOTORS:
+            print(f'  {motor.upper()} |   {str(DIALS[motor]).rjust(2)} |    {str(MOTORS[motor]).rjust(3)} |')
+            if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
+                MOTORS[motor]['position'] += 1
+                if motor == 'a':
+                    kit.stepper1.onestep(
+                        direction=stepper.FORWARD
+                    )
+                elif motor == 'b':
+                    kit.stepper1.onestep(
+                        direction=stepper.BACKWARD
+                    )
+                elif motor == 'c':
+                    #TODO: 3rd motor via 2nd motor controller
+                    pass
+
+            elif MOTORS[motor]['position'] > convert(DIALS[motor]['position']):
+                MOTORS[motor]['position'] -=1
+                if motor == 'a':
+                    kit.stepper2.onestep(
+                        direction=stepper.BACKWARD
+                    )
+                elif motor == 'b':
+                    kit.stepper2.onestep(
+                        direction=stepper.BACKWARD
+                    )
+                elif motor == 'c':
+                    #TODO: 3rd motor via 2nd motor controller
+                    pass
+
+        if interrupt.is_set():
+            break
+
 def main():
     interrupt = threading.Event()
     motor_thread = threading.Thread(
