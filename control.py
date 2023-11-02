@@ -145,7 +145,7 @@ def move_motors(interrupt):
             break
 
 def move_motors(interrupt):
-    '''Monitor values of DIAL_* variables and turn motors to match. Runs in a
+    '''Monitor values of DIAL positions and turn motors to match. Runs in a
     separate thread to the input functions to avoid blocking while rotation in progress'''
     global MOTORS
     while True:
