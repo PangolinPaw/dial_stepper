@@ -11,24 +11,20 @@ GPIO.setmode(GPIO.BCM)
 kit = MotorKit(i2c=board.I2C())
 # TODO: Add 2nd motor controller to allow 3rd motor
 
-# Dial A, first from left
-dt_A = 18
-clk_A = 17
-GPIO.setup(clk_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # clk_A
-GPIO.setup(dt_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # dt_A
+# Motor initial positions
+MOTORS = {
+    'a':{
+        'position':0
+    },
+    'b':{
+        'position':0
+    },
+    'c':{
+        'position':0
+    }
+}
 
-# Dial B, 2nd from left
-dt_B = 23
-clk_B = 22
-GPIO.setup(clk_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # clk_B
-GPIO.setup(dt_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # dt_B
-
-# Dial C, 3rd from left
-dt_C = 25
-clk_C = 24
-GPIO.setup(clk_C, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # clk_C
-GPIO.setup(dt_C, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # dt_C
-
+# Dial pins & initial positions
 DIALS = {
     'a':{
         'clk':17
@@ -47,18 +43,10 @@ DIALS = {
     }
 }
 
-MOTORS = {
-    'a':{
-        'position':0
-    },
-    'b':{
-        'position':0
-    },
-    'c':{
-        'position':0
-    }
-}
-
+# Set up dial GPIO pins
+for dial in DIALS:
+    GPIO.setup(DIALS['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(DIALS['dt'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Buffer used to smooth dial positions from noisy inputs
 DIAL_BUFFER {
