@@ -26,9 +26,28 @@ DIAL_B = 0
 MOTOR_A = 0
 MOTOR_B = 0
 
+DIAL_BUFFER {
+    'a':[],
+    'b':[]
+}
+
 def convert(dial):
     motor = dial * 8
     return motor
+
+def dial_smooting(dial, signal):
+    '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
+    the changes before they're used as signals for motor movement'''
+    global DIAL_BUFFER
+    DIAL_BUFFER[dial].append(signal)
+    if len(DIAL_BUFFER[dial]) > 3:
+        del DIAL_BUFFER[dial]
+        if sum(DIAL_BUFFER[dial]) > 1:
+            return 1
+        elif sum(DIAL_BUFFER[dial]) < 1:
+            return -1
+        else:
+            return 0
 
 def dial():
     global DIAL_A, DIAL_B
@@ -39,14 +58,15 @@ def dial():
         dt_A_state = GPIO.input(dt_A)
         if clk_A_state != clk_A_last_state:
             if dt_A_state != clk_A_state:
-                DIAL_A += 1
-                if DIAL_A > 23:
-                    DIAL_A = 0
+                change = dial_smooting('a', 1)
             else:
-                DIAL_A -= 1
-                if DIAL_A < 0:
-                    DIAL_A = 23
+                change = dial_smooting('a', -1)
             clk_A_last_state = clk_A_state
+        DIAL_A += change
+        if DIAL_A > 23:
+            DIAL_A = 0
+        elif DIAL_A < 0:
+            DIAL_A = 23
 
         clk_B_state = GPIO.input(clk_B)
         dt_B_state = GPIO.input(dt_B)
