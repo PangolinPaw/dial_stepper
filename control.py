@@ -29,13 +29,36 @@ clk_C = 24
 GPIO.setup(clk_C, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # clk_C
 GPIO.setup(dt_C, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # dt_C
 
-# Current dial & motor positions (in steps)
-DIAL_A = 0
-DIAL_B = 0
-DIAL_C = 0
-MOTOR_A = 0
-MOTOR_B = 0
-MOTOR_C = 0
+DIALS = {
+    'a':{
+        'clk':17
+        'dt':18,
+        'position':0
+    },
+    'b':{
+        'clk':17
+        'dt':18,
+        'position':0
+    },
+    'c':{
+        'clk':17
+        'dt':18,
+        'position':0
+    }
+}
+
+MOTORS = {
+    'a':{
+        'position':0
+    },
+    'b':{
+        'position':0
+    },
+    'c':{
+        'position':0
+    }
+}
+
 
 # Buffer used to smooth dial positions from noisy inputs
 DIAL_BUFFER {
@@ -64,58 +87,33 @@ def dial_smooting(dial, signal):
         else:
             return 0
 
-def dial():
+def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
-    global DIAL_A, DIAL_B, DIAL_C
-    clk_A_last_state = GPIO.input(clk_A)
-    clk_B_last_state = GPIO.input(clk_B)
+    global DIALS
+    for dial in DIALS:
+        clk_last_state = GPIO.input(DIALS[dial]['clk'])
+
     while True:
-        clk_A_state = GPIO.input(clk_A)
-        dt_A_state = GPIO.input(dt_A)
-        if clk_A_state != clk_A_last_state:
-            if dt_A_state != clk_A_state:
-                change = dial_smooting('a', 1)
-            else:
-                change = dial_smooting('a', -1)
-            clk_A_last_state = clk_A_state
-        DIAL_A += change
-        if DIAL_A > 23:
-            DIAL_A = 0
-        elif DIAL_A < 0:
-            DIAL_A = 23
+        for dial in DIALS:
+            clk_state = GPIO.input(DIALS[dial]['clk'])
+            dt_state = GPIO.input(DIALS[dial]['dt'])
+            if clk_state != clk_last_state:
+                if dt_state != clk_state:
+                    change = dial_smooting('a', 1)
+                else:
+                    change = dial_smooting('a', -1)
+            clk_last_state = clk_state
 
-        clk_B_state = GPIO.input(clk_B)
-        dt_B_state = GPIO.input(dt_B)
-        if clk_B_state != clk_B_last_state:
-            if dt_B_state != clk_B_state:
-                change = dial_smooting('b', 1)
-            else:
-                change = dial_smooting('b', -1)
-            clk_B_last_state = clk_B_state
-        DIAL_B += change
-        if DIAL_B > 23:
-            DIAL_B = 0
-        elif DIAL_B < 0:
-            DIAL_B = 23
-
-        clk_C_state = GPIO.input(clk_C)
-        dt_C_state = GPIO.input(dt_C)
-        if clk_C_state != clk_C_last_state:
-            if dt_C_state != clk_C_state:
-                change = dial_smooting('c', 1)
-            else:
-                change = dial_smooting('c', -1)
-            clk_C_last_state = clk_C_state
-        DIAL_C += change
-        if DIAL_C > 23:
-            DIAL_C = 0
-        elif DIAL_C < 0:
-            DIAL_C = 23
+        DIALS[dial]['position'] += change
+        if DIALS[dial]['position'] > 23:
+            DIALS[dial]['position'] = 0
+        elif DIALS[dial]['position'] < 0:
+            DIALS[dial]['position'] = 23
 
         time.sleep(0.01)
 
-def motor(interrupt):
+def move_motors(interrupt):
     '''Monitor values of DIAL_* variables and turn motors to match. Runs in a
     separate thread to the input functions to avoid blocking while rotation in progress'''
     global MOTOR_A, MOTOR_B
@@ -149,12 +147,12 @@ def motor(interrupt):
 def main():
     interrupt = threading.Event()
     motor_thread = threading.Thread(
-        target=motor,
+        target=move_motors,
         args=(interrupt,)
     )
     motor_thread.start()
     try:
-        dial()
+        read_dials()
     finally:
         GPIO.cleanup()
 
