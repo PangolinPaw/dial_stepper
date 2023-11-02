@@ -1,5 +1,5 @@
 import os
-
+import random
 import pygame
 
 dirname, scriptname = os.path.split(os.path.abspath(__file__))
@@ -16,6 +16,11 @@ DIAL_POSITIONS = {
     'a':0,
     'b':0,
     'c':0
+}
+DIAL_BUFFER = {
+    'a':[],
+    'b':[],
+    'c':[]
 }
 MOTOR_POSITIONS = {
     'a':0,
@@ -50,16 +55,13 @@ def init():
     }
     return screen
 
-def rotate_image(surf, image, pos, originPos, angle):
-    # from https://stackoverflow.com/a/54714144/12825882
-    image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
-    offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
-    rotated_offset = offset_center_to_pivot.rotate(-angle)
-    rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
-    rotated_image = pygame.transform.rotate(image, angle)
-    rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
-    surf.blit(rotated_image, rotated_image_rect)
-  
+
+def add_error(error_level=0.3):
+    decision = random.randint(1,10) / 10
+    if decision < error_level:
+        return True
+    else:
+        return False
 
 def draw_dials(screen):
     w, h = IMAGES['dial_a'].get_size()
@@ -131,7 +133,6 @@ def draw_dials(screen):
     return dial_a, dial_b, dial_c
 
 def draw_discs(screen):
-
     if MOTOR_POSITIONS['a'] > DIAL_POSITIONS['a']:
         MOTOR_POSITIONS['a'] -= 1.8
     if MOTOR_POSITIONS['a'] < DIAL_POSITIONS['a']:
@@ -183,6 +184,50 @@ def draw_discs(screen):
         MOTOR_POSITIONS['c']
     )
 
+def rotate_image(surf, image, pos, originPos, angle):
+    # from https://stackoverflow.com/a/54714144/12825882
+    image_rect = image.get_rect(topleft = (pos[0] - originPos[0], pos[1]-originPos[1]))
+    offset_center_to_pivot = pygame.math.Vector2(pos) - image_rect.center
+    rotated_offset = offset_center_to_pivot.rotate(-angle)
+    rotated_image_center = (pos[0] - rotated_offset.x, pos[1] - rotated_offset.y)
+    rotated_image = pygame.transform.rotate(image, angle)
+    rotated_image_rect = rotated_image.get_rect(center = rotated_image_center)
+    surf.blit(rotated_image, rotated_image_rect)
+
+def turn_dials(turn_a, turn_b, turn_c):
+    global DIAL_BUFFER, DIAL_POSITIONS
+    if turn_a == 'clockwise':
+        if add_error():
+            DIAL_BUFFER['a'].append(+1) # 360 deg / 24 steps = 15 deg
+        else:
+            DIAL_BUFFER['a'].append(-1)
+
+    elif turn_a == 'counterclocwise':
+        if add_error():
+            DIAL_BUFFER['a'].append(-1)
+        else:
+            DIAL_BUFFER['a'].append(+1)
+
+
+    if turn_b == 'clockwise':
+        DIAL_BUFFER['b'].append(-1) # 360 deg / 24 steps = 15 deg
+
+    elif turn_b == 'counterclocwise':
+        DIAL_BUFFER['b'].append(+1)
+
+    if turn_c == 'clockwise':
+        DIAL_BUFFER['c'].append(-1) # 360 deg / 24 steps = 15 deg
+    elif turn_c == 'counterclocwise':
+        DIAL_BUFFER['c'].append(+1)
+
+    for dial in DIAL_BUFFER:
+        if len(DIAL_BUFFER[dial]) > 3:
+            if sum(DIAL_BUFFER[dial]) > 0:
+                DIAL_POSITIONS[dial] += 15
+            elif sum(DIAL_BUFFER[dial]) < 0:
+                DIAL_POSITIONS[dial] -= 15
+            del DIAL_BUFFER[dial][0]
+    print(DIAL_BUFFER['a'])
 
 def main():
     global DIAL_POSITIONS
@@ -308,6 +353,7 @@ def main():
                     direction = 'counterclocwise'
                 else:
                     direction = 'clockwise'
+
                 if dial_a.collidepoint(event.pos):
                     turn_a = direction
                 if dial_b.collidepoint(event.pos):
@@ -319,32 +365,7 @@ def main():
                 turn_b = None
                 turn_c = None
 
-        if turn_a == 'clockwise':
-            DIAL_POSITIONS['a'] -= 15 # 360 deg / 24 steps = 15 deg
-            if DIAL_POSITIONS['a'] < 0:
-                DIAL_POSITIONS['a'] = 360 - 15
-        elif turn_a == 'counterclocwise':
-            DIAL_POSITIONS['a'] += 15
-            if DIAL_POSITIONS['a'] >= 360:
-                DIAL_POSITIONS['a'] = 0
-
-        if turn_b == 'clockwise':
-            DIAL_POSITIONS['b'] -= 15 # 360 deg / 24 steps = 15 deg
-            if DIAL_POSITIONS['b'] < 0:
-                DIAL_POSITIONS['b'] = 360 - 15
-        elif turn_b == 'counterclocwise':
-            DIAL_POSITIONS['b'] += 15
-            if DIAL_POSITIONS['b'] >= 360:
-                DIAL_POSITIONS['b'] = 0
-
-        if turn_c == 'clockwise':
-            DIAL_POSITIONS['c'] -= 15 # 360 deg / 24 steps = 15 deg
-            if DIAL_POSITIONS['c'] < 0:
-                DIAL_POSITIONS['c'] = 360 - 15
-        elif turn_c == 'counterclocwise':
-            DIAL_POSITIONS['c'] += 15
-            if DIAL_POSITIONS['c'] >= 360:
-                DIAL_POSITIONS['c'] = 0
+        turn_dials(turn_a, turn_b, turn_c)
 
         pygame.display.flip()
         clock.tick(10)
