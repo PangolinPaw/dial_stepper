@@ -58,6 +58,10 @@ Options:
 1. Queue positions and move to each one in sequence
 2. Cancel movement & start moving to new target position
 
+**Updates:**
+
+- Option 2 has been implemented, it's more intuitive and was simpler to code
+
 ### Dial to motor steps
 
 The rotary encoders have 24 steps and the motors have 200. 1 step on the dial should therefore translate to 8 steps of the motors, leaving the last move before a full rotation a little longer than the others.
@@ -70,6 +74,10 @@ The rotary encoders have 24 steps and the motors have 200. 1 step on the dial sh
 ### Gear ratios
 
 The disks mounted to the motors may be too heavy to rotate with a 1:1 ratio. A belt from the motor hub to the outer rim of the wheel could address this, but it would mean that the dial-to-motor step relationship would need to be adjusted.
+
+**Updates:**
+
+- The motor controller library offers an option to take "double steps" which allows for more torque. If the motor's struggle in the defaulst "single step" mode then this could be used instead. However, that may affect the dial-to-motor step ratio.
 
 ### Initial position
 
