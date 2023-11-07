@@ -144,8 +144,8 @@ def draw_discs(screen):
         screen,
         IMAGES['disk_a'],
         (
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT / 2,
+            SCREEN_WIDTH / 2 -75,
+            SCREEN_HEIGHT / 2 -75,
             
         ),
         (int(w/2), int(h/2)),
@@ -160,8 +160,8 @@ def draw_discs(screen):
         screen,
         IMAGES['disk_b'],
         (
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT / 2,
+            SCREEN_WIDTH / 2 -75,
+            SCREEN_HEIGHT / 2 -75,
             
         ),
         (int(w/2), int(h/2)),
@@ -176,8 +176,8 @@ def draw_discs(screen):
         screen,
         IMAGES['disk_c'],
         (
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT / 2,
+            SCREEN_WIDTH / 2 -75,
+            SCREEN_HEIGHT / 2 -75,
             
         ),
         (int(w/2), int(h/2)),
@@ -270,7 +270,7 @@ def main():
             ),
             (
                 (SCREEN_WIDTH / 2 - text_width / 2) - 25,
-                SCREEN_HEIGHT / 2 - 150
+                SCREEN_HEIGHT / 2 - 200
             )
         )
         position = str(int(round(MOTOR_POSITIONS['b'] / 1.8,0)))
@@ -283,7 +283,7 @@ def main():
             ),
             (
                 SCREEN_WIDTH / 2 - text_width / 2,
-                (SCREEN_HEIGHT / 2 - 150) - 25
+                (SCREEN_HEIGHT / 2 - 200) - 25
             )
         )
         position = str(int(round(MOTOR_POSITIONS['c'] / 1.8,0)))
@@ -296,7 +296,7 @@ def main():
             ),
             (
                 (SCREEN_WIDTH / 2 - text_width / 2) + 25,
-                (SCREEN_HEIGHT / 2 - 150) - 50
+                (SCREEN_HEIGHT / 2 - 200) - 50
             )
         )
 

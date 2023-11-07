@@ -27,17 +27,17 @@ MOTORS = {
 # Dial pins & initial positions
 DIALS = {
     'a':{
-        'clk':17
+        'clk':17,
         'dt':18,
         'position':0
     },
     'b':{
-        'clk':17
+        'clk':17,
         'dt':18,
         'position':0
     },
     'c':{
-        'clk':17
+        'clk':17,
         'dt':18,
         'position':0
     }
@@ -49,7 +49,7 @@ for dial in DIALS:
     GPIO.setup(DIALS['dt'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Buffer used to smooth dial positions from noisy inputs
-DIAL_BUFFER {
+DIAL_BUFFER = {
     'a':[],
     'b':[],
     'c':[]
