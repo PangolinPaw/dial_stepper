@@ -23,11 +23,17 @@ class FuzzWindow(QGraphicsView):
         self.data2, self.fs2 = self.load_audio('piano.wav')
         self.fuzz, self.fs_fuzz = self.load_audio('radio_16.wav')
 
+         # Coordinates where each audio clip plays clearly
+        self.source1_position = np.array([100, 100])  # Adjust as needed
+        self.source2_position = np.array([200, 200])  # Adjust as needed
+
         # Ensure all sample rates are the same
         assert self.fs1 == self.fs2 == self.fs_fuzz, "Sample rates do not match!"
 
         # Initialize the ellipse in the center
         self.initialize_ellipse()
+        self.initialize_markers()
+
 
         # Set up audio stream
         self.stream = sd.OutputStream(callback=self.audio_callback, samplerate=self.fs1, channels=2)
@@ -43,6 +49,20 @@ class FuzzWindow(QGraphicsView):
         self.ellipse.setBrush(Qt.white)
         self.ellipse.setFlag(QGraphicsEllipseItem.ItemIsMovable)
         self.scene.addItem(self.ellipse)
+        
+    def initialize_markers(self):
+        self.marker1 = self.create_marker(self.source1_position, Qt.red)
+        self.marker2 = self.create_marker(self.source2_position, Qt.blue)
+        
+        # Add markers to the scene
+        self.scene.addItem(self.marker1)
+        self.scene.addItem(self.marker2)
+
+    def create_marker(self, position, color):
+        marker_radius = 5
+        marker = QGraphicsEllipseItem(position[0] - marker_radius, position[1] - marker_radius, marker_radius * 2, marker_radius * 2)
+        marker.setBrush(color)
+        return marker
 
     def load_audio(self, filepath):
         data, fs = sf.read(filepath, always_2d=True)
