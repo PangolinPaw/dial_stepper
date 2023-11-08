@@ -21,7 +21,7 @@ class RadioFuzzApp(QMainWindow):
 
         # Slider for fuzz amount
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 100)
+        self.slider.setRange(0, 35)
         self.slider.setValue(0)  # Set initial value to 0
         self.slider.valueChanged.connect(self.adjust_fuzz)
         layout.addWidget(self.slider)
@@ -50,7 +50,16 @@ class RadioFuzzApp(QMainWindow):
 
         # Apply the fuzz effect
         noise = np.random.normal(0, self.fuzz_amount / 100, chunk.shape).astype('float32')
-        outdata[:] = chunk + noise
+
+        # Simple dynamic range compression based on fuzz amount
+        audio_with_fuzz = chunk * (1 - self.fuzz_amount / 100) + noise
+
+        # Normalize audio to prevent clipping
+        max_val = np.max(np.abs(audio_with_fuzz))
+        if max_val > 1:
+            audio_with_fuzz /= max_val
+
+        outdata[:] = audio_with_fuzz
 
         self.position += frames
         if chunk_end >= len(self.data):
@@ -60,6 +69,7 @@ class RadioFuzzApp(QMainWindow):
         self.stream.stop()
         self.stream.close()
         super().closeEvent(event)
+
 
 def main():
     # Set the path to your audio file here
