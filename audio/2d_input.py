@@ -4,7 +4,7 @@ import soundfile as sf
 import sounddevice as sd
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QWidget, QGraphicsView,
                              QGraphicsScene, QGraphicsEllipseItem)
-from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtGui import QPen, QBrush, QColor
 
 
@@ -24,7 +24,6 @@ class CustomEllipse(QGraphicsEllipseItem):
                 new_y = min(rect.bottom(), max(self.pos().y(), rect.top()))
                 self.setPos(new_x, new_y)
             # Emit a signal to update the mix and static levels
-            print(f"Mouse coord: | {self.pos().x()}, {self.pos().y()}")
             self.scene().update_mix(self.pos().x() / rect.width(), self.pos().y() / rect.height())
 
 
@@ -131,12 +130,15 @@ class RadioFuzzApp(QMainWindow):
         self.position += frames
 
     def adjust_mix(self, x_ratio, y_ratio):
-        # Calculate the scene coordinates from the ratios
-        current_pos = (x_ratio * self.view.width(), y_ratio * self.view.height())
+        ellipse_center_adjustment = QPointF(self.ellipse.rect().width() / 2, self.ellipse.rect().height() / 2)
+    
+    # Calculate the scene coordinates from the ratios
+        current_pos = QPointF(x_ratio * self.scene.width(), y_ratio * self.scene.height()) - ellipse_center_adjustment
 
-        # Calculate distance from the current position to both solutions
-        dist_to_sol1 = np.sqrt((current_pos[0] - self.solution1[0]) ** 2 + (current_pos[1] - self.solution1[1]) ** 2)
-        dist_to_sol2 = np.sqrt((current_pos[0] - self.solution2[0]) ** 2 + (current_pos[1] - self.solution2[1]) ** 2)
+        # Now use current_pos to calculate the distances and mix_ratio
+        dist_to_sol1 = np.hypot(current_pos.x() - self.solution1[0], current_pos.y() - self.solution1[1])
+        dist_to_sol2 = np.hypot(current_pos.x() - self.solution2[0], current_pos.y() - self.solution2[1])
+
 
         # Determine the nearest solution and its distance
         nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
