@@ -131,11 +131,13 @@ class RadioFuzzApp(QMainWindow):
         self.position += frames
 
     def adjust_mix(self, x_ratio, y_ratio):
-        # Calculate distance from the current position to both solutions
+        # Calculate the scene coordinates from the ratios
         current_pos = (x_ratio * self.view.width(), y_ratio * self.view.height())
+
+        # Calculate distance from the current position to both solutions
         dist_to_sol1 = np.sqrt((current_pos[0] - self.solution1[0]) ** 2 + (current_pos[1] - self.solution1[1]) ** 2)
         dist_to_sol2 = np.sqrt((current_pos[0] - self.solution2[0]) ** 2 + (current_pos[1] - self.solution2[1]) ** 2)
-        
+
         # Determine the nearest solution and its distance
         nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
 
@@ -143,21 +145,28 @@ class RadioFuzzApp(QMainWindow):
         max_static_dist = np.sqrt(self.view.width() ** 2 + self.view.height() ** 2)
 
         # Calculate the static intensity based on how far the nearest solution is
-        # The closer to the solution, the lower the static
         self.static_intensity = (nearest_solution_dist / max_static_dist) * 0.2
 
-        # Assume that mix_ratio depends on how close you are to one of the solutions (could be any logic)
-        # For simplicity, let's say that the mix ratio is determined by the proximity to the first solution
-        self.mix_ratio = 1 - (nearest_solution_dist / max_static_dist)
-        
+        # Check which solution is closer and set the mix_ratio accordingly
+        # Assuming you want a 1:1 ratio when directly over the solution
+        if dist_to_sol1 < dist_to_sol2:
+            # Closer to the first solution, mix_ratio favors the first audio clip
+            self.mix_ratio = 1 - (dist_to_sol1 / max_static_dist)
+        else:
+            # Closer to the second solution, mix_ratio favors the second audio clip
+            self.mix_ratio = (dist_to_sol2 / max_static_dist)
+
+        # Ensure mix_ratio stays between 0 and 1
+        self.mix_ratio = max(0, min(self.mix_ratio, 1))
+
         # Update the audio mix in real time
         self.update_audio_mix()
 
+
     # Call this method whenever you need to update the mix
     def update_audio_mix(self):
-        # Modify the audio callback or stream to update the audio in real time, if necessary
-        # This may not be needed if the audio_callback function picks up the mix_ratio and
-        # static_intensity automatically in its next call
+        # This can be optimized but for illustration purposes, let's keep it simple
+        # Whenever we update the mix, we're going to stop and restart the stream with the new mix
         pass
 
     def closeEvent(self, event):
