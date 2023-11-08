@@ -20,7 +20,7 @@ def add_radio_fuzz(input_audio, output_audio, distortion_factor):
     audio = AudioSegment.from_file(input_audio)
 
     # Generate random noise
-    noise = AudioSegment.from_file("radio.mp3")  # Replace with your noise file
+    noise = AudioSegment.from_file("radio_long.mp3")  # Replace with your noise file
 
     # Apply the distortion effect
     distorted_audio = audio.overlay(noise, position=0)
@@ -34,7 +34,7 @@ input_audio = "test_audio.mp3"
 output_audio_distorted = "audio_distorted.mp3"
 output_audio_fuzz = "audio_fuzz.mp3"
 
-distortion_factor = 50  # Adjust as needed
+distortion_factor = 100  # Adjust as needed
 # add_distortion(input_audio, output_audio_distorted, distortion_factor)
 add_radio_fuzz(input_audio, output_audio_fuzz, distortion_factor)
 
