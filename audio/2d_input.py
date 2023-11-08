@@ -24,6 +24,7 @@ class CustomEllipse(QGraphicsEllipseItem):
                 new_y = min(rect.bottom(), max(self.pos().y(), rect.top()))
                 self.setPos(new_x, new_y)
             # Emit a signal to update the mix and static levels
+            print(f"Mouse coord: | {self.pos().x()}, {self.pos().y()}")
             self.scene().update_mix(self.pos().x() / rect.width(), self.pos().y() / rect.height())
 
 
