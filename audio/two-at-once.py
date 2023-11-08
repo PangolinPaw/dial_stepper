@@ -61,13 +61,13 @@ class RadioFuzzApp(QMainWindow):
             self.position = 0  # Loop back to the beginning
 
         # Calculate the mix and the amount of static
-        static_intensity = 1 - abs(self.mix_ratio - 0.5) * 2
+        static_intensity = (1 - abs(self.mix_ratio - 0.5) * 2) * 0.2  # Scale down the static volume
         static = np.random.normal(0, static_intensity, (frames, self.data1.shape[1])).astype('float32')
 
         # Mix the audio according to the slider position
         mix_chunk = ((1 - self.mix_ratio) * self.data1[self.position:chunk_end] +
-                     self.mix_ratio * self.data2[self.position:chunk_end] +
-                     static).astype('float32')
+                    self.mix_ratio * self.data2[self.position:chunk_end] +
+                    static).astype('float32')
 
         outdata[:] = mix_chunk
 
