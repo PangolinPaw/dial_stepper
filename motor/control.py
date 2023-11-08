@@ -27,18 +27,18 @@ MOTORS = {
 # Dial pins & initial positions
 DIALS = {
     'a':{
-        'clk':17,
-        'dt':18,
+        'clk':20,
+        'dt':21,
         'position':0
     },
     'b':{
-        'clk':17,
-        'dt':18,
+        'clk':19,
+        'dt':26,
         'position':0
     },
     'c':{
-        'clk':17,
-        'dt':18,
+        'clk':5,
+        'dt':6,
         'position':0
     }
 }
