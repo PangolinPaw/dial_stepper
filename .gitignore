@@ -3,3 +3,5 @@ venv/
 
 # Temporary test scripts
 *test.py
+
+*.DS_Store
