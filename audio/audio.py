@@ -80,5 +80,5 @@ class RadioFuzzApp(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main_window = RadioFuzzApp('test_audio.wav', 'piano_trim.wav')
+    main_window = RadioFuzzApp('rock.wav', 'piano.wav')
     sys.exit(app.exec_())
