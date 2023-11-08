@@ -5,6 +5,8 @@ import sounddevice as sd
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QWidget, QGraphicsView,
                              QGraphicsScene, QGraphicsEllipseItem)
 from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtGui import QPen, QBrush, QColor
+
 
 class CustomEllipse(QGraphicsEllipseItem):
     def __init__(self, x, y, w, h):
@@ -36,6 +38,10 @@ class RadioFuzzApp(QMainWindow):
         self.mix_ratio = 0.5
         self.static_intensity = 0.5
         self.position = 0
+        
+        self.solution1 = (50, 50)  # These are example positions for solution1 and solution2
+        self.solution2 = (250, 250)
+
         self.initUI()
         self.init_audio_stream()
 
@@ -55,6 +61,8 @@ class RadioFuzzApp(QMainWindow):
         self.ellipse = CustomEllipse(0, 0, 20, 20)
         self.ellipse.setPos(150, 150)  # Starting position at center
         self.scene.addItem(self.ellipse)
+        self.draw_solutions()  # Call this method to draw the solutions
+
 
         layout.addWidget(self.view)
 
@@ -62,6 +70,35 @@ class RadioFuzzApp(QMainWindow):
         self.scene.update_mix = self.adjust_mix
 
         self.show()
+
+# Add a new method to draw solutions on the scene
+    def draw_solutions(self):
+        # Draw the solution points on the scene
+        solution_radius = 10
+        solution_pen = QPen(Qt.NoPen)  # No border for the solution
+        solution_brush = QBrush(QColor(255, 0, 0, 100))  # Semi-transparent red color
+
+        # Solution 1
+        solution1_item = QGraphicsEllipseItem(
+            self.solution1[0] - solution_radius, 
+            self.solution1[1] - solution_radius, 
+            2 * solution_radius, 
+            2 * solution_radius
+        )
+        solution1_item.setBrush(solution_brush)
+        solution1_item.setPen(solution_pen)
+        self.scene.addItem(solution1_item)
+
+        # Solution 2
+        solution2_item = QGraphicsEllipseItem(
+            self.solution2[0] - solution_radius, 
+            self.solution2[1] - solution_radius, 
+            2 * solution_radius, 
+            2 * solution_radius
+        )
+        solution2_item.setBrush(solution_brush)
+        solution2_item.setPen(solution_pen)
+        self.scene.addItem(solution2_item)
 
     def init_audio_stream(self):
         self.stream = sd.OutputStream(
@@ -93,8 +130,34 @@ class RadioFuzzApp(QMainWindow):
         self.position += frames
 
     def adjust_mix(self, x_ratio, y_ratio):
-        self.mix_ratio = x_ratio
-        self.static_intensity = y_ratio * 0.2  # Reduce static intensity
+        # Calculate distance from the current position to both solutions
+        current_pos = (x_ratio * self.view.width(), y_ratio * self.view.height())
+        dist_to_sol1 = np.sqrt((current_pos[0] - self.solution1[0]) ** 2 + (current_pos[1] - self.solution1[1]) ** 2)
+        dist_to_sol2 = np.sqrt((current_pos[0] - self.solution2[0]) ** 2 + (current_pos[1] - self.solution2[1]) ** 2)
+        
+        # Determine the nearest solution and its distance
+        nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
+
+        # Define a max distance where static is at its peak (can be adjusted)
+        max_static_dist = np.sqrt(self.view.width() ** 2 + self.view.height() ** 2)
+
+        # Calculate the static intensity based on how far the nearest solution is
+        # The closer to the solution, the lower the static
+        self.static_intensity = (nearest_solution_dist / max_static_dist) * 0.2
+
+        # Assume that mix_ratio depends on how close you are to one of the solutions (could be any logic)
+        # For simplicity, let's say that the mix ratio is determined by the proximity to the first solution
+        self.mix_ratio = 1 - (nearest_solution_dist / max_static_dist)
+        
+        # Update the audio mix in real time
+        self.update_audio_mix()
+
+    # Call this method whenever you need to update the mix
+    def update_audio_mix(self):
+        # Modify the audio callback or stream to update the audio in real time, if necessary
+        # This may not be needed if the audio_callback function picks up the mix_ratio and
+        # static_intensity automatically in its next call
+        pass
 
     def closeEvent(self, event):
         self.stream.stop()
