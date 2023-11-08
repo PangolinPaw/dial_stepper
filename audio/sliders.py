@@ -1,17 +1,21 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QSlider, QPushButton, QVBoxLayout, QWidget, QFileDialog)
+import io
+from PyQt5.QtWidgets import QApplication, QMainWindow, QSlider, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt
 from pydub import AudioSegment
 from pydub.generators import WhiteNoise
-from pydub.playback import play
+import pygame
 
 class RadioFuzzApp(QMainWindow):
-    def __init__(self):
+    def __init__(self, audio_file_path):
         super().__init__()
         self.setWindowTitle('Radio Fuzz Effect')
+        self.audio_file_path = audio_file_path
+        self.audio_clip = AudioSegment.from_file(self.audio_file_path)
+        self.noise = WhiteNoise().to_audio_segment(duration=len(self.audio_clip))
         self.initUI()
-
-        self.audio_clip = None
+        self.init_pygame()
+        self.playing = False
 
     def initUI(self):
         # Main widget and layout
@@ -21,37 +25,44 @@ class RadioFuzzApp(QMainWindow):
 
         # Slider for fuzz amount
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 100)
-        self.slider.setValue(50)
+        self.slider.setRange(85, 100)
+        self.slider.setValue(85)
+        self.slider.valueChanged.connect(self.adjust_fuzz)
         layout.addWidget(self.slider)
 
-        # Button to load audio
-        self.load_button = QPushButton('Load Audio', self)
-        self.load_button.clicked.connect(self.load_audio)
-        layout.addWidget(self.load_button)
+    def init_pygame(self):
+        # Initialize pygame mixer
+        pygame.mixer.init(frequency=self.audio_clip.frame_rate)
 
-        # Button to apply fuzz and play
-        self.fuzz_button = QPushButton('Apply Fuzz and Play', self)
-        self.fuzz_button.clicked.connect(self.apply_fuzz)
-        layout.addWidget(self.fuzz_button)
-
-    def load_audio(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open Audio", "", "Audio Files (*.mp3 *.wav *.ogg)")
-        if file_path:
-            self.audio_clip = AudioSegment.from_file(file_path)
+    def adjust_fuzz(self):
+        if not self.playing:
+            self.playing = True
+            self.apply_fuzz()
+        else:
+            # Stop the playback and start again with the new fuzz value
+            pygame.mixer.music.stop()
+            self.apply_fuzz()
 
     def apply_fuzz(self):
-        if self.audio_clip:
-            fuzz_amount = self.slider.value()
-            noise = WhiteNoise().to_audio_segment(duration=len(self.audio_clip)).apply_gain(-3 * (100 - fuzz_amount))
-            combined = self.audio_clip.overlay(noise)
-            play(combined)
-        else:
-            print("No audio loaded!")
+        fuzz_amount = self.slider.value()
+        adjusted_noise = self.noise.apply_gain(-3 * (100 - fuzz_amount))
+        combined = self.audio_clip.overlay(adjusted_noise)
+        
+        # Export combined audio to a byte buffer
+        byte_io = io.BytesIO()
+        combined.export(byte_io, format='mp3')
+        byte_io.seek(0)
+        
+        # Load the byte buffer into pygame's mixer
+        pygame.mixer.music.load(byte_io)
+        pygame.mixer.music.play(loops=-1)  # Loop indefinitely
 
 def main():
+    # Set the path to your audio file here
+    audio_file_path = 'test_audio.mp3'
+
     app = QApplication(sys.argv)
-    ex = RadioFuzzApp()
+    ex = RadioFuzzApp(audio_file_path)
     ex.show()
     sys.exit(app.exec_())
 
