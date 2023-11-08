@@ -11,8 +11,8 @@ class RadioFuzzApp(QMainWindow):
         super().__init__()
         self.setWindowTitle('Radio Fuzz Effect')
         self.audio_file_path = audio_file_path
-        self.audio_clip = AudioSegment.from_file(self.audio_file_path)
-        self.noise = WhiteNoise().to_audio_segment(duration=len(self.audio_clip))
+        self.original_audio_clip = AudioSegment.from_file(self.audio_file_path)
+        self.noise = WhiteNoise().to_audio_segment(duration=len(self.original_audio_clip))
         self.initUI()
         self.init_pygame()
         self.playing = False
@@ -25,28 +25,33 @@ class RadioFuzzApp(QMainWindow):
 
         # Slider for fuzz amount
         self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(85, 100)
-        self.slider.setValue(85)
+        self.slider.setRange(0, 100)
+        self.slider.setValue(0)  # Set initial value to 0
         self.slider.valueChanged.connect(self.adjust_fuzz)
         layout.addWidget(self.slider)
 
     def init_pygame(self):
         # Initialize pygame mixer
-        pygame.mixer.init(frequency=self.audio_clip.frame_rate)
+        pygame.mixer.init(frequency=self.original_audio_clip.frame_rate)
 
     def adjust_fuzz(self):
         if not self.playing:
             self.playing = True
             self.apply_fuzz()
         else:
-            # Stop the playback and start again with the new fuzz value
-            pygame.mixer.music.stop()
+            # Adjust the volume immediately on slider change
             self.apply_fuzz()
 
     def apply_fuzz(self):
         fuzz_amount = self.slider.value()
-        adjusted_noise = self.noise.apply_gain(-3 * (100 - fuzz_amount))
-        combined = self.audio_clip.overlay(adjusted_noise)
+        if fuzz_amount == 0:
+            combined = self.original_audio_clip
+        else:
+            # Set noise volume based on fuzz amount
+            adjusted_noise = self.noise - (30 - fuzz_amount / 100 * 30)
+            combined = self.original_audio_clip.overlay(adjusted_noise)
+        
+        combined = combined.normalize(headroom=1.0)  # Normalize the volume
         
         # Export combined audio to a byte buffer
         byte_io = io.BytesIO()
