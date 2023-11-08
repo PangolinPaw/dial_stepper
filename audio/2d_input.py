@@ -165,8 +165,6 @@ class RadioFuzzApp(QMainWindow):
 
     # Call this method whenever you need to update the mix
     def update_audio_mix(self):
-        # This can be optimized but for illustration purposes, let's keep it simple
-        # Whenever we update the mix, we're going to stop and restart the stream with the new mix
         pass
 
     def closeEvent(self, event):
