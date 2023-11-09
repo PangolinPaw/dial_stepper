@@ -17,10 +17,10 @@ class RadioFuzzApp(threading.Thread):
         self.mix_ratio = 0.5
         self.static_intensity = 0.5
         
-        # Position is a 2D tuple (x, y)
+        # Position is now a 3D tuple (x, y, z)
         self.position = position
         
-        # Solutions are points in 2D space
+        # Solutions are now points in 3D space
         self.solution1 = solution1
         self.solution2 = solution2
         
@@ -64,8 +64,8 @@ class RadioFuzzApp(threading.Thread):
 
         # Mix the audio according to the mix_ratio
         mix_chunk = ((1 - self.mix_ratio) * self.data1[self.sample_index:chunk_end] +
-                    self.mix_ratio * self.data2[self.sample_index:chunk_end] +
-                    scaled_static).astype('float32')
+                     self.mix_ratio * self.data2[self.sample_index:chunk_end] +
+                     scaled_static).astype('float32')
 
         # Ensure mix_chunk is reshaped to match the outdata shape, which is (frames, channels)
         mix_chunk = mix_chunk.reshape(-1, 1)
@@ -77,14 +77,15 @@ class RadioFuzzApp(threading.Thread):
         self.sample_index = (self.sample_index + frames) % len(self.data1)
 
     def adjust_mix(self, position):
-        # Adjust mix based on the 2D position
-        # Calculate the distance from the position to both solutions
-        dist_to_sol1 = np.hypot(position[0] - self.solution1[0], position[1] - self.solution1[1])
-        dist_to_sol2 = np.hypot(position[0] - self.solution2[0], position[1] - self.solution2[1])
+        # Adjust mix based on the 3D position
+        # Calculate the Euclidean distance from the position to both solutions in 3D
+        dist_to_sol1 = np.linalg.norm(np.subtract(position, self.solution1))
+        dist_to_sol2 = np.linalg.norm(np.subtract(position, self.solution2))
 
         # Find the nearest solution and its distance
         nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
-        max_static_dist = np.hypot(300, 300)  # Assuming a 300x300 plane for max distance
+        # Assuming a 300x300x300 cube for max distance
+        max_static_dist = np.linalg.norm([300, 300, 300])
 
         # Calculate the static intensity based on how far the nearest solution is
         self.static_intensity = (nearest_solution_dist / max_static_dist) * 0.2
@@ -99,7 +100,7 @@ class RadioFuzzApp(threading.Thread):
         self.mix_ratio = max(0, min(self.mix_ratio, 1))
 
     def update_position(self, position):
-        # Update the 2D position
+        # Update the 3D position
         self.position = position
         # Adjust the audio mix based on the new position
         self.adjust_mix(position)
@@ -108,4 +109,3 @@ class RadioFuzzApp(threading.Thread):
     def close_stream(self):
         # Safely close the audio stream
         self.stream.stop()
-

@@ -29,21 +29,20 @@ def main():  # Main function
     audio_clip_2 = 'audio/piano.wav'
     
     # Starting position and solution positions
-    initial_position = (50, 50)
-    solution1 = (25, 25)
-    solution2 = (75, 75)
+    initial_position = (50, 50, 50)
+    solution1 = (25, 25, 25)
+    solution2 = (75, 75, 75)
 
-    
-    # Create and start the RadioFuzzApp thread
+    # ------- CORE 1 Audio -------
     fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
     fuzz_app.start()  # This starts the thread
 
-    # ----- CORE 1 Start the network server in a separate thread -----
+    # ------- CORE 2 Start the network server -------
     server_thread = Thread(target=installation.serve_forever)
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 2 Start the dial listener in a separate thread --------
+    # --------- CORE 3 Dials --------
     dial_thread = Thread(target=listen_for_dial)
     dial_thread.daemon = True
     dial_thread.start()
@@ -52,18 +51,18 @@ def main():  # Main function
     try:
         while True:
             print('--------')
-            print(f'Dial values:   {dial_values}')
             print(f'Installation state: {State(installation.current_state()).name}')
+            print(f'Dial values:   {dial_values}')
             update_lights(dial_values)
             update_motors(dial_values)
             a = dial_values['a']
             b = dial_values['b']
-            fuzz_app.update_position((int(a), int(b)))
+            c = dial_values['c']
+            fuzz_app.update_position((int(a), int(b), int(c)))
             
             time.sleep(1)
     except KeyboardInterrupt:
         print("Shutting down")
-        # fuzz_app.close_stream()  # Ensure the audio stream is closed properly
 
 if __name__ == '__main__':
     main()
