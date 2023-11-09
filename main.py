@@ -15,6 +15,13 @@ dial_values = {
     "c": 3
 }
 
+def convert_dial_to_tuple():
+    a = dial_values['a']
+    b = dial_values['b']
+    c = dial_values['c']
+
+    return (int(a), int(b), int(c))
+
 def listen_for_dial():
     while True:
         dial_values['a'], dial_values['b'], dial_values['c'] = get_dial_values()
@@ -53,12 +60,10 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             print(f'Dial values:   {dial_values}')
-            update_lights(dial_values)
-            update_motors(dial_values)
-            a = dial_values['a']
-            b = dial_values['b']
-            c = dial_values['c']
-            fuzz_app.update_position((int(a), int(b), int(c)))
+            val_tuple = convert_dial_to_tuple()
+            update_lights(val_tuple)
+            update_motors(val_tuple)
+            fuzz_app.update_position(val_tuple)
             
             time.sleep(1)
     except KeyboardInterrupt:
