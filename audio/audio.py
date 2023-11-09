@@ -1,84 +1,111 @@
-import sys
+import threading
 import numpy as np
 import soundfile as sf
 import sounddevice as sd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QSlider
-from PyQt5.QtCore import Qt
 
-class RadioFuzzApp(QMainWindow):
-    def __init__(self, audio_file_path1, audio_file_path2):
+class RadioFuzzApp(threading.Thread):
+    def __init__(self, audio_file_path1, audio_file_path2, position, solution1, solution2):
         super().__init__()
-        self.setWindowTitle('Audio Mixer with Static')
         self.audio_file_path1 = audio_file_path1
         self.audio_file_path2 = audio_file_path2
-        self.initUI()
+        
+        # Read the audio files
+        self.data1, self.samplerate = sf.read(self.audio_file_path1)
+        self.data2, _ = sf.read(self.audio_file_path2)
+
+        # Set initial mix ratio and static intensity
+        self.mix_ratio = 0.5
+        self.static_intensity = 0.5
+        
+        # Position is a 2D tuple (x, y)
+        self.position = position
+        
+        # Solutions are points in 2D space
+        self.solution1 = solution1
+        self.solution2 = solution2
+        
+        # Index in the audio buffer
+        self.sample_index = 0
+
+        # Initialize the audio stream
         self.init_audio_stream()
+        
+        # Set the thread as a daemon
+        self.daemon = True
 
-    def initUI(self):
-        # Main widget and layout
-        main_widget = QWidget(self)
-        self.setCentralWidget(main_widget)
-        layout = QVBoxLayout(main_widget)
-
-        # Slider for blending audio and static
-        self.slider = QSlider(Qt.Horizontal)
-        self.slider.setRange(0, 35)  # Set range from 0 to 35
-        self.slider.setValue(0)  # Start with only the first clip playing
-        self.slider.valueChanged.connect(self.adjust_mix)
-        layout.addWidget(self.slider)
-
-        self.show()
-
-    def init_audio_stream(self):
-        # Load both audio files
-        self.data1, self.fs1 = sf.read(self.audio_file_path1, dtype='float32')
-        self.data2, self.fs2 = sf.read(self.audio_file_path2, dtype='float32')
-
-        # Ensure both audio clips are the same length and sample rate
-        assert self.fs1 == self.fs2, "Sample rates do not match!"
-        min_len = min(len(self.data1), len(self.data2))
-        self.data1, self.data2 = self.data1[:min_len], self.data2[:min_len]
-
-        # Audio stream setup
-        self.stream = sd.OutputStream(samplerate=self.fs1, channels=self.data1.shape[1], callback=self.audio_callback)
+    def run(self):
+        # Start the audio stream
         self.stream.start()
 
-        # Initial mix is just the first audio clip
-        self.mix_ratio = 0  # Ratio of how much of each audio clip to play
-        self.position = 0
-
-    def adjust_mix(self):
-        # Adjust the mix ratio based on the slider's position
-        self.mix_ratio = self.slider.value() / 35
+    def init_audio_stream(self):
+        # Determine the number of channels in the audio files
+        channels1 = self.data1.shape[1] if self.data1.ndim > 1 else 1
+        channels2 = self.data2.shape[1] if self.data2.ndim > 1 else 1
+        
+        # Initialize the output stream with the callback
+        self.stream = sd.OutputStream(
+            samplerate=self.samplerate,
+            channels=max(channels1, channels2),
+            callback=self.audio_callback,
+        )
 
     def audio_callback(self, outdata, frames, time, status):
         if status:
             print(status, file=sys.stderr)
-        
-        chunk_end = self.position + frames
+
+        # Calculate the end of the current chunk
+        chunk_end = self.sample_index + frames
         if chunk_end > len(self.data1):
             chunk_end = len(self.data1)
-            self.position = 0  # Loop back to the beginning
+            self.sample_index = 0  # Loop back to the beginning if needed
 
-        # Calculate the mix and the amount of static
-        static_intensity = (1 - abs(self.mix_ratio - 0.5) * 2) * 0.2  # Scale down the static volume
-        static = np.random.normal(0, static_intensity, (frames, self.data1.shape[1])).astype('float32')
+        # Generate scaled static based on static_intensity
+        scaled_static = np.random.normal(0, self.static_intensity, frames).astype('float32')
 
-        # Mix the audio according to the slider position
-        mix_chunk = ((1 - self.mix_ratio) * self.data1[self.position:chunk_end] +
-                    self.mix_ratio * self.data2[self.position:chunk_end] +
-                    static).astype('float32')
+        # Mix the audio according to the mix_ratio
+        mix_chunk = ((1 - self.mix_ratio) * self.data1[self.sample_index:chunk_end] +
+                    self.mix_ratio * self.data2[self.sample_index:chunk_end] +
+                    scaled_static).astype('float32')
 
+        # Ensure mix_chunk is reshaped to match the outdata shape, which is (frames, channels)
+        mix_chunk = mix_chunk.reshape(-1, 1)
+
+        # Write the mixed audio to the output buffer
         outdata[:] = mix_chunk
 
-        self.position += frames
+        # Update the sample index
+        self.sample_index = (self.sample_index + frames) % len(self.data1)
 
-    def closeEvent(self, event):
+    def adjust_mix(self, position):
+        # Adjust mix based on the 2D position
+        # Calculate the distance from the position to both solutions
+        dist_to_sol1 = np.hypot(position[0] - self.solution1[0], position[1] - self.solution1[1])
+        dist_to_sol2 = np.hypot(position[0] - self.solution2[0], position[1] - self.solution2[1])
+
+        # Find the nearest solution and its distance
+        nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
+        max_static_dist = np.hypot(300, 300)  # Assuming a 300x300 plane for max distance
+
+        # Calculate the static intensity based on how far the nearest solution is
+        self.static_intensity = (nearest_solution_dist / max_static_dist) * 0.2
+
+        # Check which solution is closer and set the mix_ratio accordingly
+        if dist_to_sol1 < dist_to_sol2:
+            self.mix_ratio = 1 - (dist_to_sol1 / max_static_dist)
+        else:
+            self.mix_ratio = (dist_to_sol2 / max_static_dist)
+
+        # Ensure mix_ratio stays between 0 and 1
+        self.mix_ratio = max(0, min(self.mix_ratio, 1))
+
+    def update_position(self, position):
+        # Update the 2D position
+        self.position = position
+        # Adjust the audio mix based on the new position
+        self.adjust_mix(position)
+        print(f'AUDIO:   {self.position}')
+    
+    def close_stream(self):
+        # Safely close the audio stream
         self.stream.stop()
-        self.stream.close()
-        super().closeEvent(event)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    main_window = RadioFuzzApp('rock.wav', 'piano.wav')
-    sys.exit(app.exec_())
