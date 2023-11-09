@@ -14,13 +14,9 @@ dial_values = {
 }
 
 def listen_for_dial(installation): # CORE 2
-    
     while True:
-        read_dials = get_dial_values()
-
         dial_values['a'], dial_values['b'], dial_values['c'] = get_dial_values()
         time.sleep(1)  # Sleep to prevent this from running too fast
-
 
 def main(): # 
     HOST, PORT = "localhost", 9999  # We have Raspberry PI with ID 92
@@ -40,7 +36,7 @@ def main(): #
     try:
         while True:
             print('--------')
-            print(dial_values)
+            print(f'Dial values:   {dial_values}')
             print(f'Installation state: {State(installation.current_state()).name}')
             update_lights(dial_values)
             update_motors(dial_values)
