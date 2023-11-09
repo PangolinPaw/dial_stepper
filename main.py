@@ -1,9 +1,10 @@
-from installation import Installation
 from threading import Thread
 import time
-from messages import State
-from audio.audio import RadioFuzzApp
 
+from installation import Installation
+from messages import State
+
+from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 from motor.mock_motor import update_motors
 from dials.mock_dial import get_dial_values
@@ -24,8 +25,8 @@ def main():  # Main function
     installation = Installation(HOST, PORT, id=92, init_state=State.INTERACTIVE)
 
     # Paths to your audio files
-    audio_clip_1 = 'audio/rock_16.wav'
-    audio_clip_2 = 'audio/piano_16.wav'
+    audio_clip_1 = 'audio/rock.wav'
+    audio_clip_2 = 'audio/piano.wav'
     
     # Starting position and solution positions
     initial_position = (50, 50)
