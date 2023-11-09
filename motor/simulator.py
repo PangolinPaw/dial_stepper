@@ -229,6 +229,13 @@ def turn_dials(turn_a, turn_b, turn_c):
             del DIAL_BUFFER[dial][0]
     print(DIAL_BUFFER['a'])
 
+def get_dial_positions():
+    dial_pos = DIAL_POSITIONS.copy()
+    dial_pos['a'] = dial_pos['a'] / 15
+    dial_pos['b'] = dial_pos['b'] / 15
+    dial_pos['bc'] = dial_pos['c'] / 15
+    return dial_pos
+
 def main():
     global DIAL_POSITIONS
     screen = init()
@@ -366,6 +373,7 @@ def main():
                 turn_c = None
 
         turn_dials(turn_a, turn_b, turn_c)
+        print(get_dial_positions())
 
         pygame.display.flip()
         clock.tick(10)
