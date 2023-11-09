@@ -5,6 +5,7 @@ from messages import State
 
 from light.mock_lights import update_lights
 from motor.mock_motor import update_motors
+from dials.mock_dial import get_dial_values
 
 dial_values = {
     "a" : 1,
@@ -12,15 +13,12 @@ dial_values = {
     "c" : 3
 }
 
-def listen_for_dial(installation): # CORE 1
-    # Replace this while loop with the actual code to read from the dial
+def listen_for_dial(installation): # CORE 2
+    
     while True:
-        with open('./mock_dials/dials.txt', 'r') as file:
-            contents = file.read().split(',')
-            dial_values['a'] = contents[0]
-            dial_values['b'] = contents[1]
-            dial_values['c'] = contents[2]
+        read_dials = get_dial_values()
 
+        dial_values['a'], dial_values['b'], dial_values['c'] = get_dial_values()
         time.sleep(1)  # Sleep to prevent this from running too fast
 
 
