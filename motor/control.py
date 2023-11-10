@@ -45,8 +45,8 @@ DIALS = {
 
 # Set up dial GPIO pins
 for dial in DIALS:
-    GPIO.setup(DIALS['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.setup(DIALS['dt'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(DIALS[dial]['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(DIALS[dial]['dt'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Buffer used to smooth dial positions from noisy inputs
 DIAL_BUFFER = {
@@ -67,31 +67,36 @@ def dial_smooting(dial, signal):
     global DIAL_BUFFER
     DIAL_BUFFER[dial].append(signal)
     if len(DIAL_BUFFER[dial]) > 3:
-        del DIAL_BUFFER[dial]
+        del DIAL_BUFFER[dial][0]
         if sum(DIAL_BUFFER[dial]) > 1:
             return 1
         elif sum(DIAL_BUFFER[dial]) < 1:
             return -1
         else:
             return 0
+    else:
+        return 0
 
 def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
     global DIALS
+    clk_last_state = {}
     for dial in DIALS:
-        clk_last_state = GPIO.input(DIALS[dial]['clk'])
+        clk_last_state[dial] = GPIO.input(DIALS[dial]['clk'])
 
     while True:
         for dial in DIALS:
             clk_state = GPIO.input(DIALS[dial]['clk'])
             dt_state = GPIO.input(DIALS[dial]['dt'])
-            if clk_state != clk_last_state:
+            change = 0
+            if clk_state != clk_last_state[dial]:
+                print(f'DIAL {dial.upper()} MOVED!')
                 if dt_state != clk_state:
-                    change = dial_smooting('a', 1)
+                    change = dial_smooting(dial, 1)
                 else:
-                    change = dial_smooting('a', -1)
-            clk_last_state = clk_state
+                    change = dial_smooting(dial, -1)
+            clk_last_state[dial] = clk_state
 
         DIALS[dial]['position'] += change
         if DIALS[dial]['position'] > 23:
@@ -100,37 +105,6 @@ def read_dials():
             DIALS[dial]['position'] = 23
 
         time.sleep(0.01)
-
-def move_motors(interrupt):
-    '''Monitor values of DIAL_* variables and turn motors to match. Runs in a
-    separate thread to the input functions to avoid blocking while rotation in progress'''
-    global MOTOR_A, MOTOR_B
-    # TODO: Add 3rd motor
-    while True:
-        os.system('clear')
-        print()
-        print(f' DIAL_A:  {str(DIAL_A).rjust(3)}')
-        print(f' MOTOR_A: {str(MOTOR_A).rjust(3)}')
-        print(f' DIAL_B:  {str(DIAL_B).rjust(3)}')
-        print(f' MOTOR_B: {str(MOTOR_B).rjust(3)}')
-
-        if MOTOR_A < convert(DIAL_A):
-            MOTOR_A += 1
-            kit.stepper1.onestep(
-                direction=stepper.FORWARD
-            )
-        elif MOTOR_A > convert(DIAL_A):
-            MOTOR_A -=1
-            kit.stepper1.onestep(
-                direction=stepper.BACKWARD
-            )
-        if MOTOR_B < convert(DIAL_B):
-            MOTOR_B += 1
-        elif MOTOR_B > convert(DIAL_B):
-            MOTOR_B -=1
-
-        if interrupt.is_set():
-            break
 
 def move_motors(interrupt):
     '''Monitor values of DIAL positions and turn motors to match. Runs in a
@@ -142,7 +116,7 @@ def move_motors(interrupt):
         print(f'    | DIAL | MOTOR |')
         print(f' ---|------|-------|')
         for motor in MOTORS:
-            print(f'  {motor.upper()} |   {str(DIALS[motor]).rjust(2)} |    {str(MOTORS[motor]).rjust(3)} |')
+            print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
             if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
                 MOTORS[motor]['position'] += 1
                 if motor == 'a':
