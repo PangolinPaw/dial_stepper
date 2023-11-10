@@ -124,8 +124,8 @@ def move_motors(interrupt):
                         direction=stepper.FORWARD
                     )
                 elif motor == 'b':
-                    kit.stepper1.onestep(
-                        direction=stepper.BACKWARD
+                    kit.stepper2.onestep(
+                        direction=stepper.FORWARD
                     )
                 elif motor == 'c':
                     #TODO: 3rd motor via 2nd motor controller
@@ -134,7 +134,7 @@ def move_motors(interrupt):
             elif MOTORS[motor]['position'] > convert(DIALS[motor]['position']):
                 MOTORS[motor]['position'] -=1
                 if motor == 'a':
-                    kit.stepper2.onestep(
+                    kit.stepper1.onestep(
                         direction=stepper.BACKWARD
                     )
                 elif motor == 'b':
