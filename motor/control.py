@@ -98,11 +98,11 @@ def read_dials():
                     change = dial_smooting(dial, -1)
             clk_last_state[dial] = clk_state
 
-        DIALS[dial]['position'] += change
-        if DIALS[dial]['position'] > 23:
-            DIALS[dial]['position'] = 0
-        elif DIALS[dial]['position'] < 0:
-            DIALS[dial]['position'] = 23
+            DIALS[dial]['position'] += change
+            if DIALS[dial]['position'] > 23:
+                DIALS[dial]['position'] = 0
+            elif DIALS[dial]['position'] < 0:
+                DIALS[dial]['position'] = 23
 
         time.sleep(0.01)
 
