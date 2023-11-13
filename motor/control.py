@@ -148,21 +148,31 @@ def move_motors(interrupt):
 
 def test_sequence():
     while True:
-        for x in range(30):
+        for x in range(200):
             kit.stepper1.onestep(
                 direction=stepper.FORWARD
             )
-            time.sleep(0.1)
-        for x in range(30):
+        for x in range(200):
             kit.stepper2.onestep(
                 direction=stepper.FORWARD
             )
-            time.sleep(0.1)
-        for x in range(30):
+        for x in range(200):
             kit2.stepper1.onestep(
                 direction=stepper.FORWARD
             )
-            time.sleep(0.1)
+        time.sleep(1)
+        for x in range(200):
+            kit.stepper1.onestep(
+                direction=stepper.BACKWARD
+            )
+        for x in range(200):
+            kit.stepper2.onestep(
+                direction=stepper.BACKWARD
+            )
+        for x in range(200):
+            kit2.stepper1.onestep(
+                direction=stepper.BACKWARD
+            )
         time.sleep(1)
 
 def main():
