@@ -37,8 +37,8 @@ DIALS = {
         'position':0
     },
     'c':{
-        'clk':5,
-        'dt':6,
+        'clk':6,
+        'dt':5,
         'position':0
     }
 }
@@ -188,5 +188,5 @@ def main():
         GPIO.cleanup()
 
 if __name__ == '__main__':
-    # main()
-    test_sequence()
+     main()
+#    test_sequence()
