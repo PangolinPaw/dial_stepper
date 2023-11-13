@@ -8,8 +8,8 @@ from RPi import GPIO
 
 # Initialise GPIO & motor controllers
 GPIO.setmode(GPIO.BCM)
-kit = MotorKit(i2c=board.I2C())
-# TODO: Add 2nd motor controller to allow 3rd motor
+kit = MotorKit(i2c=board.I2C()) # Lower controller (motors A & B)
+kit2 = MotorKit(address=0x61) # Upper controller (motor C)
 
 # Motor initial positions
 MOTORS = {
@@ -124,8 +124,9 @@ def move_motors(interrupt):
                         direction=stepper.FORWARD
                     )
                 elif motor == 'c':
-                    #TODO: 3rd motor via 2nd motor controller
-                    pass
+                    kit2.stepper1.onestep(
+                        direction=stepper.FORWARD
+                    )
 
             elif MOTORS[motor]['position'] > convert(DIALS[motor]['position']):
                 MOTORS[motor]['position'] -=1
@@ -138,11 +139,31 @@ def move_motors(interrupt):
                         direction=stepper.BACKWARD
                     )
                 elif motor == 'c':
-                    #TODO: 3rd motor via 2nd motor controller
-                    pass
+                    kit2.stepper1.onestep(
+                        direction=stepper.BACKWARD
+                    )
 
         if interrupt.is_set():
             break
+
+def test_sequence():
+    while True:
+        for x in range(30):
+            kit.stepper1.onestep(
+                direction=stepper.FORWARD
+            )
+            time.sleep(0.1)
+        for x in range(30):
+            kit.stepper2.onestep(
+                direction=stepper.FORWARD
+            )
+            time.sleep(0.1)
+        for x in range(30):
+            kit2.stepper1.onestep(
+                direction=stepper.FORWARD
+            )
+            time.sleep(0.1)
+        time.sleep(1)
 
 def main():
     interrupt = threading.Event()
@@ -156,6 +177,6 @@ def main():
     finally:
         GPIO.cleanup()
 
-
 if __name__ == '__main__':
-    main()
+    # main()
+    test_sequence()
