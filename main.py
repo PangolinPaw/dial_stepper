@@ -55,7 +55,7 @@ def main():  # Main function
     server_thread.start()
 
     # --------- CORE 3 Motors --------
-    motor_thread = threading.Thread(target=move_motors)
+    motor_thread = Thread(target=move_motors)
     motor_thread.start()
 
 
