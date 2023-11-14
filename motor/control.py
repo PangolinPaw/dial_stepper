@@ -82,21 +82,26 @@ def dial_smooting(dial, signal):
 def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
-    global DIALS, clk_last_state
-
+    global DIALS
+    clk_last_state = {}
     for dial in DIALS:
-        clk_state = GPIO.input(DIALS[dial]['clk'])
-        dt_state = GPIO.input(DIALS[dial]['dt'])
-        change = 0
-        if clk_state != clk_last_state[dial]:
-            if dt_state != clk_state:
-                change = dial_smooting(dial, 1)
-            else:
-                change = dial_smooting(dial, -1)
-        clk_last_state[dial] = clk_state
+        clk_last_state[dial] = GPIO.input(DIALS[dial]['clk'])
 
-        DIALS[dial]['position'] += change
-    time.sleep(0.01)
+    while True:
+        for dial in DIALS:
+            clk_state = GPIO.input(DIALS[dial]['clk'])
+            dt_state = GPIO.input(DIALS[dial]['dt'])
+            change = 0
+            if clk_state != clk_last_state[dial]:
+                if dt_state != clk_state:
+                    change = dial_smooting(dial, 1)
+                else:
+                    change = dial_smooting(dial, -1)
+            clk_last_state[dial] = clk_state
+
+            DIALS[dial]['position'] += change
+
+        time.sleep(0.01)
 
 def move_motors():
     '''Monitor values of DIAL positions and turn motors to match. Runs in a
