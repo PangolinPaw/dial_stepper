@@ -74,7 +74,7 @@ def main():  # Main function
             val_tuple = convert_dial_to_tuple()
             update_lights(val_tuple)
             update_motors(val_tuple)
-            fuzz_app.update_position(val_tuple)
+            #fuzz_app.update_position(val_tuple)
             
             time.sleep(1)
     except KeyboardInterrupt:
