@@ -9,7 +9,7 @@ from light.mock_lights import update_lights
 from motor.mock_motor import update_motors
 from dials.mock_dial import get_dial_values
 
-from motor.control import move_motors
+from motor.control import move_motors, read_dials
 
 dial_values = {
     "a": 1,
@@ -70,6 +70,7 @@ def main():  # Main function
             val_tuple = convert_dial_to_tuple()
             update_lights(val_tuple)
             update_motors(val_tuple)
+            read_dials()
             fuzz_app.update_position(val_tuple)
             
             time.sleep(1)
