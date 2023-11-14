@@ -16,12 +16,10 @@ dial_values = {
     "a": 1,
     "b": 2,
     "c": 3
-
-
 }
 
 
-def convert_dial_to_tuple():
+def convert_motors_to_tuple():
     a = dial_values['a']
     b = dial_values['b']
     c = dial_values['c']
@@ -71,9 +69,11 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             print(f'MOTORS values:   {MOTORS}')
-            val_tuple = convert_dial_to_tuple()
-            update_lights(val_tuple)
-            update_motors(val_tuple)
+            motors_tuple = convert_motors_to_tuple()
+            
+            
+            # update_lights(val_tuple)
+            # update_motors(val_tuple)
             #fuzz_app.update_position(val_tuple)
             
             time.sleep(1)
