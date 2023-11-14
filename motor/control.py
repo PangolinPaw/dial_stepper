@@ -110,8 +110,6 @@ def move_motors():
         print()
         print(f'    | DIAL | MOTOR |')
         print(f' ---|------|-------|')
-
-        print(clk_last_state)
         for motor in MOTORS:
             print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
             if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
@@ -174,10 +172,8 @@ def test_sequence():
         time.sleep(1)
 
 def main():
-    interrupt = threading.Event()
     motor_thread = threading.Thread(
         target=move_motors,
-        args=(interrupt,)
     )
     motor_thread.start()
     try:
@@ -186,5 +182,5 @@ def main():
         GPIO.cleanup()
 
 if __name__ == '__main__':
-     main()
-#    test_sequence()
+#     main()
+    test_sequence()
