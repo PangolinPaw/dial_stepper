@@ -60,7 +60,7 @@ def main():  # Main function
     motor_thread = Thread(target=move_motors)
     motor_thread.start()
 
-
+    global DIALS
     
 
     # Keep the main thread alive to prevent the program from exiting
@@ -68,7 +68,7 @@ def main():  # Main function
         while True:
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-            print(f'Dial values:   {dial_values}')
+            print(f'Dial values:   {DIALS}')
             val_tuple = convert_dial_to_tuple()
             update_lights(val_tuple)
             update_motors(val_tuple)
