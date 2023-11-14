@@ -82,28 +82,22 @@ def read_dials():
     & distance'''
     global DIALS
 
-    DIALS['a']['position'] = 50
-
-
-    """
     clk_last_state = {}
     for dial in DIALS:
         clk_last_state[dial] = GPIO.input(DIALS[dial]['clk'])
 
-    while True:
-        for dial in DIALS:
-            clk_state = GPIO.input(DIALS[dial]['clk'])
-            dt_state = GPIO.input(DIALS[dial]['dt'])
-            change = 0
-            if clk_state != clk_last_state[dial]:
-                if dt_state != clk_state:
-                    change = dial_smooting(dial, 1)
-                else:
-                    change = dial_smooting(dial, -1)
-            clk_last_state[dial] = clk_state
+    for dial in DIALS:
+        clk_state = GPIO.input(DIALS[dial]['clk'])
+        dt_state = GPIO.input(DIALS[dial]['dt'])
+        change = 0
+        if clk_state != clk_last_state[dial]:
+            if dt_state != clk_state:
+                change = dial_smooting(dial, 1)
+            else:
+                change = dial_smooting(dial, -1)
+        clk_last_state[dial] = clk_state
 
-            DIALS[dial]['position'] += change
-    """
+        DIALS[dial]['position'] += change
     time.sleep(0.01)
 
 def move_motors():
