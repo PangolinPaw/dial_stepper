@@ -57,13 +57,6 @@ def solution_distance(current_position, solution):
     """
     distances = circular_distance(current_position, solution)
     return np.sum(distances)
-
-def get_distance_to_solutions():
-    distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
-    distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
-    print(f'Distance to robot:   {distance_to_robot}')
-    print(f'Distance to zone:   {distance_to_zone}')
-
     
 
 def main():  # Main function
@@ -79,20 +72,23 @@ def main():  # Main function
     solution1 = (25, 25, 25)
     solution2 = (75, 75, 75)
 
-    # # ------- CORE 1 Audio -------
-    # fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
-    # fuzz_app.start()  # This starts the thread
+    # # ------- CORE 1 Dials -------
     dials_thread = Thread(target=read_dials)
     dials_thread.start()
 
-    # ------- CORE 2 Start the network server -------
+    # -------- Core 2 Audio --------
+    initial_distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
+    initial_distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
+ 
+    fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_distance_to_robot, initial_distance_to_zone)
+    fuzz_app.start()
+
     """
+    # ------- CORE 2 Start the network server -------
     server_thread = Thread(target=installation.serve_forever)
     server_thread.daemon = True
     server_thread.start()
     """
-    fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
-    fuzz_app.start()  # This starts the thread
 
     # --------- CORE 3 Motors --------
     motor_thread = Thread(target=move_motors)
@@ -110,7 +106,15 @@ def main():  # Main function
             
             convert_motors_to_np()
             print(f'MOTORS values:   {MOTORS_NP}')
-            get_distance_to_solutions()
+            
+            # Calculate the current distances to the solutions
+            current_distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
+            current_distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
+            print(f'Distance to robot:   {current_distance_to_robot}')
+            print(f'Distance to zone:   {current_distance_to_zone}')
+ 
+            fuzz_app.update_distances(current_distance_to_robot, current_distance_to_zone)
+            
             
             # update_lights(val_tuple)
             # update_motors(val_tuple)
