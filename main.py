@@ -9,11 +9,16 @@ from light.mock_lights import update_lights
 from motor.mock_motor import update_motors
 from dials.mock_dial import get_dial_values
 
+from motor.control import move_motors
+
 dial_values = {
     "a": 1,
     "b": 2,
     "c": 3
+
+
 }
+
 
 def convert_dial_to_tuple():
     a = dial_values['a']
@@ -49,10 +54,12 @@ def main():  # Main function
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 3 Dials --------
-    dial_thread = Thread(target=listen_for_dial)
-    dial_thread.daemon = True
-    dial_thread.start()
+    # --------- CORE 3 Motors --------
+    motor_thread = threading.Thread(target=move_motors)
+    motor_thread.start()
+
+
+    
 
     # Keep the main thread alive to prevent the program from exiting
     try:
