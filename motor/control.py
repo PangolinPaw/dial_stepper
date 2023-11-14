@@ -84,8 +84,6 @@ def read_dials():
     & distance'''
     global DIALS, clk_last_state
 
-    print(clk_last_state)
-
     for dial in DIALS:
         clk_state = GPIO.input(DIALS[dial]['clk'])
         dt_state = GPIO.input(DIALS[dial]['dt'])
@@ -109,6 +107,8 @@ def move_motors():
         print()
         print(f'    | DIAL | MOTOR |')
         print(f' ---|------|-------|')
+
+        print(clk_last_state)
         for motor in MOTORS:
             print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
             if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
