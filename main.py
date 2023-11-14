@@ -1,6 +1,7 @@
 from threading import Thread
 import time
 import os
+import numpy
 
 from installation import Installation
 from messages import State
@@ -18,18 +19,30 @@ dial_values = {
     "c": 3
 }
 
+solutions = {
+    'robot' : (0,0,0),
+    'zone' : (0, 50, 0)
+}
 
-def convert_motors_to_tuple():
+
+def convert_motors_to_np():
     a = dial_values['a']
     b = dial_values['b']
     c = dial_values['c']
 
-    return (int(a), int(b), int(c))
+    return numpy.array((int(a), int(b), int(c))
 
 def listen_for_dial():
     while True:
         dial_values['a'], dial_values['b'], dial_values['c'] = get_dial_values()
         time.sleep(0.1)  # Sleep to prevent this from running too fast
+
+
+def get_dist_to_solutions():
+    current_pos = convert_motors_to_tuple()
+    distance_to_robot = res = tuple(map(lambda i, j: i - j, test_tup1, test_tup2))
+
+    
 
 def main():  # Main function
     HOST, PORT = "localhost", 9999  # We have Raspberry PI with ID 92
@@ -68,9 +81,9 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-            print(f'MOTORS values:   {MOTORS}')
-            motors_tuple = convert_motors_to_tuple()
             
+            motors_np = convert_motors_to_np()
+            print(f'MOTORS values:   {motors_np}')          
             
             # update_lights(val_tuple)
             # update_motors(val_tuple)
