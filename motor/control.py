@@ -108,10 +108,7 @@ def move_motors():
     while True:
         os.system('clear')
         print()
-        print(f'    | DIAL | MOTOR |')
-        print(f' ---|------|-------|')
-
-        print(clk_last_state)
+        print(f'    | DIAL | MOTOR')
         for motor in MOTORS:
             print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
             if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
