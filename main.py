@@ -36,9 +36,8 @@ def listen_for_dial():
 
 
 def get_distance_to_solutions():
-    current_pos = convert_motors_to_np()
-    distance_to_robot = np.subtract(current_pos, robot_solution)
-    distance_to_zone = np.subtract(current_pos, zone_solution)
+    distance_to_robot = np.subtract(MOTORS_NP, robot_solution)
+    distance_to_zone = np.subtract(MOTORS_NP, zone_solution)
     print(f'Distance to robot:   {distance_to_robot}')
     print(f'Distance to zone:   {distance_to_zone}')
 
