@@ -1,7 +1,7 @@
 from threading import Thread
 import time
 import os
-import numpy
+import numpy as np
 
 from installation import Installation
 from messages import State
@@ -19,8 +19,8 @@ dial_values = {
     "c": 3
 }
 
-robot_solution = numpy.array([0,0,0])
-zone_solution = numpy.array([0,50,0])
+robot_solution = np.array([0,0,0])
+zone_solution = np.array([0,50,0])
 
 
 def convert_motors_to_np():
@@ -28,7 +28,7 @@ def convert_motors_to_np():
     b = MOTORS['b']['position']
     c = MOTORS['c']['position']
 
-    return numpy.array([int(a), int(b), int(c)])
+    return np.array([int(a), int(b), int(c)])
 
 def listen_for_dial():
     while True:
