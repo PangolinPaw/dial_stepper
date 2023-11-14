@@ -30,7 +30,7 @@ def convert_motors_to_np():
     b = dial_values['b']
     c = dial_values['c']
 
-    return numpy.array((int(a), int(b), int(c))
+    return numpy.array([int(a), int(b), int(c)])
 
 def listen_for_dial():
     while True:
