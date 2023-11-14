@@ -84,6 +84,8 @@ def read_dials():
     & distance'''
     global DIALS, clk_last_state
 
+    print(clk_last_state)
+
     for dial in DIALS:
         clk_state = GPIO.input(DIALS[dial]['clk'])
         dt_state = GPIO.input(DIALS[dial]['dt'])
