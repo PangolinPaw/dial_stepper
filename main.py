@@ -10,7 +10,7 @@ from light.mock_lights import update_lights
 from motor.mock_motor import update_motors
 from dials.mock_dial import get_dial_values
 
-from motor.control import move_motors, read_dials, DIALS
+from motor.control import move_motors, read_dials, MOTORS
 
 dial_values = {
     "a": 1,
@@ -61,7 +61,7 @@ def main():  # Main function
     motor_thread = Thread(target=move_motors)
     motor_thread.start()
 
-    global DIALS
+    global MOTORS
     
 
     # Keep the main thread alive to prevent the program from exiting
@@ -70,7 +70,7 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-            print(f'Dial values:   {DIALS}')
+            print(f'MOTORS values:   {MOTORS}')
             val_tuple = convert_dial_to_tuple()
             update_lights(val_tuple)
             update_motors(val_tuple)
