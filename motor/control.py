@@ -8,7 +8,7 @@ from RPi import GPIO
 
 # Initialise GPIO & motor controllers
 GPIO.setmode(GPIO.BCM)
-kit = MotorKit(i2c=board.I2C()) # Lower controller (motors A & B)
+kit = MotorKit() # Lower controller (motors A & B)
 kit2 = MotorKit(address=0x61) # Upper controller (motor C)
 
 # Motor initial positions
@@ -27,8 +27,8 @@ MOTORS = {
 # Dial pins & initial positions
 DIALS = {
     'a':{
-        'clk':20,
-        'dt':21,
+        'clk':21,
+        'dt':20,
         'position':0
     },
     'b':{
@@ -91,7 +91,6 @@ def read_dials():
             dt_state = GPIO.input(DIALS[dial]['dt'])
             change = 0
             if clk_state != clk_last_state[dial]:
-                print(f'DIAL {dial.upper()} MOVED!')
                 if dt_state != clk_state:
                     change = dial_smooting(dial, 1)
                 else:
