@@ -81,6 +81,11 @@ def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
     global DIALS
+
+    DIALS['a']['position'] = 50
+
+
+    """
     clk_last_state = {}
     for dial in DIALS:
         clk_last_state[dial] = GPIO.input(DIALS[dial]['clk'])
@@ -98,10 +103,10 @@ def read_dials():
             clk_last_state[dial] = clk_state
 
             DIALS[dial]['position'] += change
+    """
+    time.sleep(0.01)
 
-        time.sleep(0.01)
-
-def move_motors(interrupt):
+def move_motors():
     '''Monitor values of DIAL positions and turn motors to match. Runs in a
     separate thread to the input functions to avoid blocking while rotation in progress'''
     global MOTORS
@@ -141,9 +146,6 @@ def move_motors(interrupt):
                     kit2.stepper1.onestep(
                         direction=stepper.BACKWARD
                     )
-
-        if interrupt.is_set():
-            break
 
 def test_sequence():
     while True:
