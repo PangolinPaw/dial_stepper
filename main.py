@@ -89,7 +89,7 @@ def main():  # Main function
             # update_motors(val_tuple)
             #fuzz_app.update_position(val_tuple)
             
-            time.sleep(1)
+            time.sleep(0.2)
     except KeyboardInterrupt:
         print("Shutting down")
 
