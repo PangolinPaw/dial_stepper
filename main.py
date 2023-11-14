@@ -18,17 +18,16 @@ dial_values = {
     "b": 2,
     "c": 3
 }
+MOTORS_NP = np.array([0,0,0])
 
 robot_solution = np.array([0,0,0])
 zone_solution = np.array([0,50,0])
 
 
 def convert_motors_to_np():
-    a = MOTORS['a']['position']
-    b = MOTORS['b']['position']
-    c = MOTORS['c']['position']
-
-    return np.array([int(a), int(b), int(c)])
+    MOTORS_NP[0] = MOTORS['a']['position']
+    MOTORS_NP[1] = MOTORS['b']['position']
+    MOTORS_NP[2] = MOTORS['c']['position']
 
 def listen_for_dial():
     while True:
@@ -83,8 +82,8 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             
-            motors_np = convert_motors_to_np()
-            print(f'MOTORS values:   {motors_np}')
+            convert_motors_to_np()
+            print(f'MOTORS values:   {MOTORS_NP}')
             get_distance_to_solutions()
             
             # update_lights(val_tuple)
