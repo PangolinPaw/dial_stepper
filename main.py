@@ -45,9 +45,11 @@ def main():  # Main function
     solution1 = (25, 25, 25)
     solution2 = (75, 75, 75)
 
-    # ------- CORE 1 Audio -------
-    fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
-    fuzz_app.start()  # This starts the thread
+    # # ------- CORE 1 Audio -------
+    # fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
+    # fuzz_app.start()  # This starts the thread
+    dials_thread = Thread(target=read_dials)
+    dials_thread.start()
 
     # ------- CORE 2 Start the network server -------
     server_thread = Thread(target=installation.serve_forever)
@@ -70,7 +72,6 @@ def main():  # Main function
             val_tuple = convert_dial_to_tuple()
             update_lights(val_tuple)
             update_motors(val_tuple)
-            read_dials()
             fuzz_app.update_position(val_tuple)
             
             time.sleep(1)
