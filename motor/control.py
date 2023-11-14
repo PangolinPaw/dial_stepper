@@ -107,7 +107,7 @@ def move_motors():
     global MOTORS
     while True:
         for motor in MOTORS:
-            print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
+            #print(f'  {motor.upper()} |   {str(DIALS[motor]["position"]).rjust(2)} |   {str(MOTORS[motor]["position"]).rjust(3)} |')
             if MOTORS[motor]['position'] < convert(DIALS[motor]['position']):
                 MOTORS[motor]['position'] += 1
                 if motor == 'a':
