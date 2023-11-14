@@ -25,9 +25,10 @@ zone_solution = np.array([0,50,0])
 
 
 def convert_motors_to_np():
-    MOTORS_NP[0] = MOTORS['a']['position']
-    MOTORS_NP[1] = MOTORS['b']['position']
-    MOTORS_NP[2] = MOTORS['c']['position']
+    # One rotation of the motor is 200
+    MOTORS_NP[0] = MOTORS['a']['position'] % 200
+    MOTORS_NP[1] = MOTORS['b']['position'] % 200
+    MOTORS_NP[2] = MOTORS['c']['position'] % 200
 
 def listen_for_dial():
     while True:
