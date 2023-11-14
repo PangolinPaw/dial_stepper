@@ -26,9 +26,9 @@ solutions = {
 
 
 def convert_motors_to_np():
-    a = dial_values['a']
-    b = dial_values['b']
-    c = dial_values['c']
+    a = MOTORS['a']['position']
+    b = MOTORS['b']['position']
+    c = MOTORS['c']['position']
 
     return numpy.array([int(a), int(b), int(c)])
 
