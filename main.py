@@ -86,9 +86,13 @@ def main():  # Main function
     dials_thread.start()
 
     # ------- CORE 2 Start the network server -------
+    """
     server_thread = Thread(target=installation.serve_forever)
     server_thread.daemon = True
     server_thread.start()
+    """
+    fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
+    fuzz_app.start()  # This starts the thread
 
     # --------- CORE 3 Motors --------
     motor_thread = Thread(target=move_motors)
