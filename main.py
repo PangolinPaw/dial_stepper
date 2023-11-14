@@ -35,10 +35,32 @@ def listen_for_dial():
         dial_values['a'], dial_values['b'], dial_values['c'] = get_dial_values()
         time.sleep(0.1)  # Sleep to prevent this from running too fast
 
+def circular_distance(pos1, pos2, max_value=200):
+    """
+    Calculate the minimum circular distance between two positions.
+    
+    :param pos1: First position (current position of motor).
+    :param pos2: Second position (target position/solution).
+    :param max_value: Maximum value on the circle (200 for motor positions).
+    :return: Minimum distance between the two positions.
+    """
+    distance = np.abs(pos1 - pos2)
+    return np.minimum(distance, max_value - distance)
+
+def solution_distance(current_position, solution):
+    """
+    Calculate the distance between current motor positions and a solution.
+    
+    :param current_position: numpy array of current positions of motors.
+    :param solution: numpy array of solution positions.
+    :return: Total distance to the solution.
+    """
+    distances = circular_distance(current_position, solution)
+    return np.sum(distances)
 
 def get_distance_to_solutions():
-    distance_to_robot = np.absolute(np.subtract(MOTORS_NP, robot_solution))
-    distance_to_zone = np.absolute(np.subtract(MOTORS_NP, zone_solution))
+    distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
+    distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
     print(f'Distance to robot:   {distance_to_robot}')
     print(f'Distance to zone:   {distance_to_zone}')
 
