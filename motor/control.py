@@ -43,6 +43,8 @@ DIALS = {
     }
 }
 
+clk_last_state = {'a' : False, 'b': False, 'c': False}
+
 # Set up dial GPIO pins
 for dial in DIALS:
     GPIO.setup(DIALS[dial]['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -80,11 +82,7 @@ def dial_smooting(dial, signal):
 def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
-    global DIALS
-
-    clk_last_state = {}
-    for dial in DIALS:
-        clk_last_state[dial] = GPIO.input(DIALS[dial]['clk'])
+    global DIALS, clk_last_state
 
     for dial in DIALS:
         clk_state = GPIO.input(DIALS[dial]['clk'])
