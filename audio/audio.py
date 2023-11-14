@@ -4,7 +4,7 @@ import soundfile as sf
 import sounddevice as sd
 
 class RadioFuzzApp(threading.Thread):
-    def __init__(self, audio_file_path1, audio_file_path2, position, solution1, solution2):
+    def __init__(self, audio_file_path1, audio_file_path2, distance_to_solution1, distance_to_solution2):
         super().__init__()
         self.audio_file_path1 = audio_file_path1
         self.audio_file_path2 = audio_file_path2
@@ -17,12 +17,9 @@ class RadioFuzzApp(threading.Thread):
         self.mix_ratio = 0.5
         self.static_intensity = 0.5
         
-        # Position is now a 3D tuple (x, y, z)
-        self.position = position
-        
-        # Solutions are now points in 3D space
-        self.solution1 = solution1
-        self.solution2 = solution2
+        # Distances to the solutions
+        self.distance_to_solution1 = distance_to_solution1
+        self.distance_to_solution2 = distance_to_solution2
         
         # Index in the audio buffer
         self.sample_index = 0
@@ -76,35 +73,33 @@ class RadioFuzzApp(threading.Thread):
         # Update the sample index
         self.sample_index = (self.sample_index + frames) % len(self.data1)
 
-    def adjust_mix(self, position):
-        # Adjust mix based on the 3D position
-        # Calculate the Euclidean distance from the position to both solutions in 3D
-        dist_to_sol1 = np.linalg.norm(np.subtract(position, self.solution1))
-        dist_to_sol2 = np.linalg.norm(np.subtract(position, self.solution2))
-
+    def adjust_mix(self, distance_to_solution1, distance_to_solution2):
         # Find the nearest solution and its distance
-        nearest_solution_dist = min(dist_to_sol1, dist_to_sol2)
-        # Assuming a 300x300x300 cube for max distance
-        max_static_dist = np.linalg.norm([300, 300, 300])
+        nearest_solution_dist = min(distance_to_solution1, distance_to_solution2)
+        # Assuming a 300 unit for max distance
+        max_static_dist = 300
 
         # Calculate the static intensity based on how far the nearest solution is
         self.static_intensity = (nearest_solution_dist / max_static_dist) * 0.2
 
         # Check which solution is closer and set the mix_ratio accordingly
-        if dist_to_sol1 < dist_to_sol2:
-            self.mix_ratio = 1 - (dist_to_sol1 / max_static_dist)
+        if distance_to_solution1 < distance_to_solution2:
+            self.mix_ratio = 1 - (distance_to_solution1 / max_static_dist)
         else:
-            self.mix_ratio = (dist_to_sol2 / max_static_dist)
+            self.mix_ratio = (distance_to_solution2 / max_static_dist)
 
         # Ensure mix_ratio stays between 0 and 1
         self.mix_ratio = max(0, min(self.mix_ratio, 1))
 
-    def update_position(self, position):
-        # Update the 3D position
-        self.position = position
-        # Adjust the audio mix based on the new position
-        self.adjust_mix(position)
-        print(f'AUDIO:   {self.position}')
+    def update_distances(self, distance_to_solution1, distance_to_solution2):
+        # Update the distances to the solutions
+        self.distance_to_solution1 = distance_to_solution1
+        self.distance_to_solution2 = distance_to_solution2
+
+        # Adjust the audio mix based on the new distances
+        self.adjust_mix(distance_to_solution1, distance_to_solution2)
+        print(f'AUDIO:   Solution1 Dist: {distance_to_solution1}, Solution2 Dist: {distance_to_solution2}')
+  
     
     def close_stream(self):
         # Safely close the audio stream
