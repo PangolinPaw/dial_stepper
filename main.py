@@ -1,5 +1,6 @@
 from threading import Thread
 import time
+import os
 
 from installation import Installation
 from messages import State
@@ -66,6 +67,7 @@ def main():  # Main function
     # Keep the main thread alive to prevent the program from exiting
     try:
         while True:
+            os.clear()
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             print(f'Dial values:   {DIALS}')
