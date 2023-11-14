@@ -20,8 +20,8 @@ dial_values = {
 }
 MOTORS_NP = np.array([0,0,0])
 
-robot_solution = np.array([0,0,0])
-zone_solution = np.array([0,50,0])
+robot_solution = np.array([0,25,0])
+zone_solution = np.array([0,100,0])
 
 
 def convert_motors_to_np():
