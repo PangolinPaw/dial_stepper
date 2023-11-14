@@ -43,8 +43,6 @@ DIALS = {
     }
 }
 
-clk_last_state = {'a' : False, 'b': False, 'c': False}
-
 # Set up dial GPIO pins
 for dial in DIALS:
     GPIO.setup(DIALS[dial]['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
