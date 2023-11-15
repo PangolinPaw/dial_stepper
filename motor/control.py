@@ -11,13 +11,16 @@ kit2 = MotorKit(address=0x61) # Upper controller (motor C)
 # Motor positions for use in other scripts
 MOTORS = {
     'a':{
-        'position':0
+        'position':0,
+        'motor':kit.stepper1
     },
     'b':{
-        'position':0
+        'position':0,
+        'motor':kit.stepper2
     },
     'c':{
-        'position':0
+        'position':0,
+        'motor':kit2.stepper1
     }
 }
 
@@ -118,6 +121,18 @@ def read_dials():
             dials[dial]['position'] = (dials[dial]['position'] + change) % 24
         time.sleep(0.01)
 
+def set_motor(motor_name, position):
+    '''Intended for demo mode, move motor to specified position'''
+    global MOTORS
+    while position != MOTORS[motor_name]['position']:
+        if position > MOTORS[motor_name]['position']:
+            MOTORS[motor_name]['motor'].onestep(direction=stepper.FORWARD)
+            MOTORS[motor_name]['position'] += 1
+        else:
+            MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
+            MOTORS[motor_name]['position'] -= 1
+        time.sleep(0.01)
 
 if __name__ == '__main__':
     read_dials()
+
