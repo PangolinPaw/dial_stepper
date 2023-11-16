@@ -31,7 +31,7 @@ RATIO = 20
 SMOOTHING = 16
 
 def dial_smooting(dial, signal):
-    print(f'DIAL {dial} : Buffer:  {dial['buffer']})
+    print(f'DIAL {dial} : Buffer:  {dial['buffer']}')
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
     the changes before they're used as signals for motor movement'''
     dial['buffer'].append(signal)
