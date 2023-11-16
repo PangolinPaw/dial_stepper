@@ -34,14 +34,10 @@ def dial_smooting(dial, signal):
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
     the changes before they're used as signals for motor movement'''
     dial['buffer'].append(signal)
+    
     if len(dial['buffer']) > SMOOTHING:
         del dial['buffer'][0]
-        if sum(dial['buffer']) >= 3:
-            return 1
-        elif sum(dial['buffer']) <= -3:
-            return -1
-        else:
-            return 0
+        return sum(dial['buffer'])
     else:
         return 0
 
@@ -103,18 +99,20 @@ def read_dials():
             if clk_state != dials[dial]['clk_last_state']:
                 if dt_state != clk_state:
                     change = dial_smooting(dials[dial], 1)
-                    move_motor(
-                        dial,
-                        dials[dial]['motor'],
-                        stepper.FORWARD
-                    )
+                    for x in range(change):
+                        move_motor(
+                            dial,
+                            dials[dial]['motor'],
+                            stepper.FORWARD
+                        )
                 else:
                     change = dial_smooting(dials[dial], -1)
-                    move_motor(
-                        dial,
-                        dials[dial]['motor'],
-                        stepper.BACKWARD
-                    )
+                    for x in range(change):
+                        move_motor(
+                            dial,
+                            dials[dial]['motor'],
+                            stepper.BACKWARD
+                        )
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
 
