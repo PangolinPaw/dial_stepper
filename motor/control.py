@@ -28,7 +28,7 @@ MOTORS = {
 RATIO = 8
 
 # Level of 'smoothing' applied to dial input
-SMOOTHING = 8
+SMOOTHING = 16
 
 def dial_smooting(dial, signal):
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
