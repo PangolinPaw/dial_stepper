@@ -96,9 +96,9 @@ def read_dials():
         counter += 1
 
         if counter == 25:
-            dial_smoothing(dials['a'], 0)
-            dial_smoothing(dials['b'], 0)
-            dial_smoothing(dials['c'], 0)
+            dial_smooting(dials['a'], 0)
+            dial_smooting(dials['b'], 0)
+            dial_smooting(dials['c'], 0)
             counter = 0
         
         for dial in dials:
