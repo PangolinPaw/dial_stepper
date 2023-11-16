@@ -89,8 +89,8 @@ def main():  # Main function
     server_thread.start()
 
     # --------- CORE 3 Motors --------
-    motor_thread = Thread(target=move_motor)
-    motor_thread.start()
+    # motor_thread = Thread(target=move_motor)
+    # motor_thread.start()
 
     global MOTORS
     
