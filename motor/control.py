@@ -36,9 +36,9 @@ def dial_smooting(dial, signal):
     dial['buffer'].append(signal)
     if len(dial['buffer']) > SMOOTHING:
         del dial['buffer'][0]
-        if sum(dial['buffer']) > 1:
+        if sum(dial['buffer']) >= 5:
             return 1
-        elif sum(dial['buffer']) < 1:
+        elif sum(dial['buffer']) < 5:
             return -1
         else:
             return 0
