@@ -9,7 +9,7 @@ from messages import State
 from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 
-from motor.control import move_motor, read_dials, MOTORS
+from motor.control import read_dials, MOTORS
 
 dial_values = {
     "a": 1,
@@ -87,10 +87,6 @@ def main():  # Main function
     server_thread = Thread(target=installation.serve_forever)
     server_thread.daemon = True
     server_thread.start()
-
-    # --------- CORE 3 Motors --------
-    motor_thread = Thread(target=move_motor)
-    motor_thread.start()
 
     global MOTORS
     
