@@ -1,4 +1,4 @@
-eimport time
+import time
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 from RPi import GPIO
