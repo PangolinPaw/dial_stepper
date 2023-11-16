@@ -25,7 +25,7 @@ MOTORS = {
 }
 
 # Ratio between dial steps & motor steps
-RATIO = 8
+RATIO = 20
 
 # Level of 'smoothing' applied to dial input
 SMOOTHING = 16
