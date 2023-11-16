@@ -117,7 +117,7 @@ def read_dials():
                         )
                 else:
                     change = dial_smooting(dials[dial], -1)
-                    for x in range(change):
+                    for x in range(abs(change)):
                         move_motor(
                             dial,
                             dials[dial]['motor'],
