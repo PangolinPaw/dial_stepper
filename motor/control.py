@@ -90,8 +90,16 @@ def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
     dials = initialise()
+    counter = 0
 
     while True:
+        counter += 1
+
+        if counter % 25:
+            dial_smoothing(dials['a'], 0)
+            dial_smoothing(dials['b'], 0)
+            dial_smoothing(dials['c'], 0)
+        
         for dial in dials:
             clk_state = GPIO.input(dials[dial]['clk'])
             dt_state = GPIO.input(dials[dial]['dt'])
@@ -113,8 +121,6 @@ def read_dials():
                             dials[dial]['motor'],
                             stepper.BACKWARD
                         )
-            else:
-                dial_smoothing(dials[dial], 0)
                 
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
