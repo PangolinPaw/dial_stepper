@@ -9,7 +9,7 @@ from messages import State
 from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 
-from motor.control import move_motors, read_dials, MOTORS
+from motor.control import move_motor, read_dials, MOTORS
 
 dial_values = {
     "a": 1,
