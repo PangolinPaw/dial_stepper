@@ -1,4 +1,4 @@
-import time
+eimport time
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 from RPi import GPIO
@@ -113,6 +113,9 @@ def read_dials():
                             dials[dial]['motor'],
                             stepper.BACKWARD
                         )
+            else:
+                dial_smoothing(dials[dial], 0)
+                
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
 
