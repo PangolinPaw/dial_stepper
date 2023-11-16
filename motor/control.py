@@ -95,10 +95,11 @@ def read_dials():
     while True:
         counter += 1
 
-        if counter % 25:
+        if counter == 25:
             dial_smoothing(dials['a'], 0)
             dial_smoothing(dials['b'], 0)
             dial_smoothing(dials['c'], 0)
+            counter = 0
         
         for dial in dials:
             clk_state = GPIO.input(dials[dial]['clk'])
