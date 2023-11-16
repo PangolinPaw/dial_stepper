@@ -25,23 +25,20 @@ MOTORS = {
 }
 
 # Ratio between dial steps & motor steps
-RATIO = 8
+RATIO = 20
 
 # Level of 'smoothing' applied to dial input
-SMOOTHING = 8
+SMOOTHING = 16
 
 def dial_smooting(dial, signal):
+    print(f"Buffer:  {dial['buffer']}   | Sum: {sum(dial['buffer'])}")
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
     the changes before they're used as signals for motor movement'''
     dial['buffer'].append(signal)
+    
     if len(dial['buffer']) > SMOOTHING:
         del dial['buffer'][0]
-        if sum(dial['buffer']) > 1:
-            return 1
-        elif sum(dial['buffer']) < 1:
-            return -1
-        else:
-            return 0
+        return sum(dial['buffer'])
     else:
         return 0
 
@@ -94,8 +91,17 @@ def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
     dials = initialise()
+    counter = 0
 
     while True:
+        counter += 1
+
+        if counter == 5:
+            dial_smooting(dials['a'], 0)
+            dial_smooting(dials['b'], 0)
+            dial_smooting(dials['c'], 0)
+            counter = 0
+        
         for dial in dials:
             clk_state = GPIO.input(dials[dial]['clk'])
             dt_state = GPIO.input(dials[dial]['dt'])
@@ -103,18 +109,21 @@ def read_dials():
             if clk_state != dials[dial]['clk_last_state']:
                 if dt_state != clk_state:
                     change = dial_smooting(dials[dial], 1)
-                    move_motor(
-                        dial,
-                        dials[dial]['motor'],
-                        stepper.FORWARD
-                    )
+                    for x in range(change):
+                        move_motor(
+                            dial,
+                            dials[dial]['motor'],
+                            stepper.FORWARD
+                        )
                 else:
                     change = dial_smooting(dials[dial], -1)
-                    move_motor(
-                        dial,
-                        dials[dial]['motor'],
-                        stepper.BACKWARD
-                    )
+                    for x in range(abs(change)):
+                        move_motor(
+                            dial,
+                            dials[dial]['motor'],
+                            stepper.BACKWARD
+                        )
+                
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
 
