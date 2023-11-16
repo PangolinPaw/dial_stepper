@@ -98,7 +98,7 @@ def main():  # Main function
     # Keep the main thread alive to prevent the program from exiting
     try:
         while True:
-            #os.system('clear')
+            os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             
