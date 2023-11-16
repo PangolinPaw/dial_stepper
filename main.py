@@ -8,8 +8,6 @@ from messages import State
 
 from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
-from motor.mock_motor import update_motors
-from dials.mock_dial import get_dial_values
 
 from motor.control import move_motors, read_dials, MOTORS
 
