@@ -29,9 +29,9 @@ def convert_image(path):
             led_array[index] = resized_img[row, col]
     return led_array
 
-fan_array = convert_image("Dilated/fan.jpeg")
-robot_array = convert_image("Dilated/robot.jpeg")
-supersonic_array = convert_image("Dilated/supersonic.jpeg")
-vacuum_array = convert_image("Dilated/vacuum.jpeg")
-zone_array = convert_image("Dilated/zone.jpeg")
+fan_array = convert_image("./light/dilated/fan.jpeg")
+robot_array = convert_image("./light/dilated/robot.jpeg")
+supersonic_array = convert_image("./light/dilated/supersonic.jpeg")
+vacuum_array = convert_image("./light/dilated/vacuum.jpeg")
+zone_array = convert_image("./light/dilated/zone.jpeg")
 all_white_array = np.ones((LED_COUNT, 3), dtype=int)
