@@ -20,7 +20,10 @@ def test_sequence():
 def display_product(image_path):
 	led_values = convert_image(image_path)
 	for x in range(LED_COUNT):
-		pixels[x] = led_values[x]
+		if sum(led_values[x] < 200):
+			pixels[x] = led_values[x]
+		else:
+			pixels[x] = [0,0,0]
 
 
 if __name__ == '__main__':
