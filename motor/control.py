@@ -83,7 +83,7 @@ def move_motor(motor_name, motor, direction):
             direction=direction, style=stepper.SINGLE
         )
         change += 1
-        time.sleep(0.01)
+        time.sleep(0.02)
     new_position = MOTORS[motor_name]['position'] + change
     MOTORS[motor_name]['position'] = new_position % 200
 
