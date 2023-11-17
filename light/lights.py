@@ -25,6 +25,10 @@ def display_product(image_path):
 
 if __name__ == '__main__':
 	image_path = "disk-image.png"
-	display_product(image_path)
+	paths = ['fan.jpg', 'robot.jpg', 'supersonic.jpg', 'vacuum.jpg', 'zone.jpg']
+	while True:
+		for x in paths:
+			display_product(f"Solutions/{x}")
+			time.sleep(3)
 
 
