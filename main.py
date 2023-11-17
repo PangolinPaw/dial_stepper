@@ -8,6 +8,7 @@ from messages import State
 
 from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
+from light.lights import set_lights, Product
 
 from motor.control import move_motor, read_dials, MOTORS
 
@@ -91,13 +92,19 @@ def main():  # Main function
     # --------- CORE 3 Lights --------
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
+    set_lights(Product.NO_PRODUCT)
 
     global MOTORS
     
-
+    counter = 0
     # Keep the main thread alive to prevent the program from exiting
     try:
         while True:
+            counter += 1
+            if counter == 20:
+                set_lights(Product.FAN)
+
+
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
