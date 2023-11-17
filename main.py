@@ -88,7 +88,7 @@ def main():  # Main function
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 3 Motors --------
+    # --------- CORE 3 Lights --------
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
 
