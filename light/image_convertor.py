@@ -32,7 +32,8 @@ def convert_image(path):
 
 print("-----------------")
 print(os.getcwd())
-fan_array = convert_image("./light/dilated/fan.jpeg")
+
+fan_array = convert_image("/home/raspberry/Desktop/dial_stepper/dial_stepper/light/dilated/fan.jpeg")
 print(fan_array)
 robot_array = convert_image("./light/dilated/robot.jpeg")
 supersonic_array = convert_image("./light/dilated/supersonic.jpeg")
