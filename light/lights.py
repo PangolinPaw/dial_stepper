@@ -4,7 +4,7 @@ import neopixel
 
 LED_COUNT = 225
 
-pixels = neopixel.NeoPixel(board.D18, LED_COUNT)
+pixels = neopixel.NeoPixel(board.D23, LED_COUNT)
 
 def test_sequence():
 	'''Illuminate each LED in turn to check operation'''
