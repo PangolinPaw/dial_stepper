@@ -80,7 +80,7 @@ def move_motor(motor_name, motor, direction):
     change = 0
     for x in range(RATIO):
         motor.onestep(
-            direction=direction
+            direction=direction, style=stepper.SINGLE
         )
         change += 1
     new_position = MOTORS[motor_name]['position'] + change
