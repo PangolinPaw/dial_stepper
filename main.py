@@ -106,7 +106,7 @@ def main():  # Main function
             if counter == 20:
                 set_lights(products[product_i % len(products)])
                 product_i += 1
-                countr = 0
+                counter = 0
 
 
             os.system('clear')
