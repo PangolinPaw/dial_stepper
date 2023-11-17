@@ -28,6 +28,7 @@ def convert_image(path):
 
             # Assign the pixel value to the correct LED
             led_array[index] = resized_img[row, col]
+    np.savetxt(f'{path}.csv', led_array)
     return led_array
 
 
