@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import os
 
 LED_COUNT = 225  # For a 15x15 matrix
 
@@ -29,6 +29,9 @@ def convert_image(path):
             led_array[index] = resized_img[row, col]
     return led_array
 
+
+print("-----------------")
+print(os.cwd())
 fan_array = convert_image("./light/dilated/fan.jpeg")
 robot_array = convert_image("./light/dilated/robot.jpeg")
 supersonic_array = convert_image("./light/dilated/supersonic.jpeg")
