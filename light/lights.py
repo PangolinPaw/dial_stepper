@@ -36,9 +36,6 @@ def set_lights(state):
 		display_product(fan_array)
 
 
-def pulse_lights():
-
-
 def display_product(led_values):
 	for x in range(LED_COUNT):
 		if sum(led_values[x] < 200):
