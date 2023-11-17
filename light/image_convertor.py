@@ -6,7 +6,6 @@ LED_COUNT = 225  # For a 15x15 matrix
 
 # Assuming LED_COUNT is the total number of LEDs
 
-
 def convert_image(path):
         
     # Read the image and resize it
@@ -28,7 +27,10 @@ def convert_image(path):
 
             # Assign the pixel value to the correct LED
             led_array[index] = resized_img[row, col]
-    np.savetxt(f'{path}.csv', led_array)
     return led_array
 
-
+fan_array = convert_image("Dilated/fan.jpeg")
+robot_array = convert_image("Dilated/robot.jpeg")
+supersonic_array = convert_image("Dilated/supersonic.jpeg")
+vacuum_array = convert_image("Dilated/vacuum.jpeg")
+zone_array = convert_image("Dilated/zone.jpeg")

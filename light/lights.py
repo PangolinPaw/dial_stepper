@@ -2,7 +2,8 @@ import time
 import board
 import neopixel
 
-from image_convertor import convert_image
+from image_convertor import fan_array, robot_array, zone_array, vacuum_array, supersonic_array
+
 LED_COUNT = 225
 
 pixels = neopixel.NeoPixel(board.D18, LED_COUNT)
@@ -17,8 +18,7 @@ def test_sequence():
 		pixels[x] = (0, 0, 0)
 		time.sleep(0.25)
 
-def display_product(image_path):
-	led_values = convert_image(image_path)
+def display_product(led_values):
 	for x in range(LED_COUNT):
 		if sum(led_values[x] < 200):
 			pixels[x] = led_values[x]
@@ -28,10 +28,10 @@ def display_product(image_path):
 
 if __name__ == '__main__':
 	image_path = "disk-image.png"
-	paths = ['fan.jpeg', 'robot.jpeg', 'supersonic.jpeg', 'vacuum.jpeg', 'zone.jpeg']
+	arrays = fan_array, robot_array, zone_array, vacuum_array, supersonic_array
 	while True:
-		for x in paths:
-			display_product(f"Dilated/{x}")
+		for x in arrays:
+			display_product(x)
 			time.sleep(3)
 
 
