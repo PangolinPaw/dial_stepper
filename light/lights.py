@@ -4,7 +4,7 @@ import neopixel
 from enum import Enum
 
 
-from image_convertor import fan_array, robot_array, zone_array, vacuum_array, supersonic_array, all_white_array
+from light.image_convertor import fan_array, robot_array, zone_array, vacuum_array, supersonic_array, all_white_array
 
 LED_COUNT = 225
 
