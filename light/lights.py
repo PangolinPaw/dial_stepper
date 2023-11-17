@@ -34,6 +34,14 @@ def set_lights(state):
 		display_product(all_white_array)
 	if state == Product.FAN:
 		display_product(fan_array)
+	if state == Product.ROBOT:
+		display_product(robot_array)
+	if state == Product.ZONE:
+		display_product(zone_array)
+	if state == Product.VACUUM:
+		display_product(vacuum_array)
+	if state == Product.SUPERSONIC:
+		display_product(supersonic_array)
 
 
 def display_product(led_values):

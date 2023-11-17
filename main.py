@@ -93,16 +93,19 @@ def main():  # Main function
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
     set_lights(Product.NO_PRODUCT)
+    products = [Product.FAN, Product.ROBOT, Product.SUPERSONIC, Product.VACUUM, Product.ZONE]
 
     global MOTORS
     
     counter = 0
+    product_i = 0
     # Keep the main thread alive to prevent the program from exiting
     try:
         while True:
             counter += 1
             if counter == 20:
-                set_lights(Product.FAN)
+                set_lights(products[product_i % len(products)])
+                product_i += 1
 
 
             os.system('clear')
