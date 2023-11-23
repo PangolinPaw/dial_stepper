@@ -25,7 +25,7 @@ MOTORS = {
 }
 
 # Ratio between dial steps & motor steps
-RATIO = 20
+RATIO = 5
 
 # Level of 'smoothing' applied to dial input
 SMOOTHING = 16
@@ -80,7 +80,7 @@ def move_motor(motor_name, motor, direction):
     change = 0
     for x in range(RATIO):
         motor.onestep(
-            direction=direction, style=stepper.SINGLE
+            direction=direction, style=stepper.DOUBLE
         )
         change += 1
         time.sleep(0.02)
@@ -141,6 +141,12 @@ def set_motor(motor_name, position):
             MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
             MOTORS[motor_name]['position'] -= 1
         time.sleep(0.01)
+
+def set_motors(motor_positions):
+    set_motor('a', motor_positions[0])
+    set_motor('b', motor_positions[1])
+    set_motor('c', motor_positions[2])
+
 
 if __name__ == '__main__':
     read_dials()

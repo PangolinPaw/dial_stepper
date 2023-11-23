@@ -10,7 +10,7 @@ from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
-from motor.control import set_motor, read_dials, MOTORS
+from motor.control import set_motors, read_dials, MOTORS
 
 dial_values = {
     "a": 1,
@@ -20,12 +20,13 @@ dial_values = {
 MOTORS_NP = np.array([0,0,0])
 
 ######## Motor positions for each solutions
+POSITION_TOLERANCE = 5 # 5/200, 200 is a full rotation of the motor
 Solutions = [None] * (len(Product) + 1)
-Solutions[Product.FAN]          = np.array([0   ,0  ,0])
-Solutions[Product.ROBOT]        = np.array([50  ,0  ,0])
-Solutions[Product.SUPERSONIC]   = np.array([100 ,0  ,0])
-Solutions[Product.VACUUM]       = np.array([150 ,0  ,0])
-Solutions[Product.ZONE]         = np.array([175 ,0  ,0])
+Solutions[Product.FAN.value]          = np.array([0   ,0  ,0])
+Solutions[Product.ROBOT.value]        = np.array([50  ,0  ,0])
+Solutions[Product.SUPERSONIC.value]   = np.array([100 ,0  ,0])
+Solutions[Product.VACUUM.value]       = np.array([150 ,0  ,0])
+Solutions[Product.ZONE.value]         = np.array([175 ,0  ,0])
 
 ######## Demo Mode Variables
 DEMO_INTERVAL_S = 15
@@ -68,15 +69,15 @@ def get_distance_to_solutions():
     print(f'Distance to zone:   {distance_to_zone}')
 
 def check_solutions():
-    if MOTORS_NP == Solutions[Product.FAN]:
+    if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         set_lights(Product.FAN)
-    elif MOTORS_NP == Solutions[Product.ROBOT]:
+    elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
         set_lights(Product.ROBOT)
-    elif MOTORS_NP == Solutions[Product.SUPERSONIC]:
+    elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
         set_lights(Product.SUPERSONIC)
-    elif MOTORS_NP == Solutions[Product.VACUUM]:
+    elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
         set_lights(Product.VACUUM)
-    elif MOTORS_NP == Solutions[Product.ZONE]:
+    elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
         set_lights(Product.ZONE)
     else:
         set_lights(Product.NO_PRODUCT)
@@ -90,13 +91,11 @@ def demo_mode():
 
     if(new_time - demo_start_time):
         # Display next solution
+        demo_start_time = new_time
         set_lights(Product.NO_PRODUCT)
         current_solution = get_next_solution()
         motor_positions = Solutions[current_solution]
-        set_motor('a', motor_positions[0])
-        set_motor('b', motor_positions[1])
-        set_motor('c', motor_positions[2])
-        demo_start_time = new_time
+        set_motors(motor_positions)
         set_lights(Product(current_solution))
 
 def interactive_mode():
@@ -105,6 +104,8 @@ def interactive_mode():
     check_solutions()
 
 def off():
+    motor_positions = Solutions[Product.FAN]
+    set_motors(motor_positions)
     set_lights(Product.OFF)
 
 def main():  # Main function
@@ -126,7 +127,6 @@ def main():  # Main function
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
     set_lights(Product.NO_PRODUCT)
-    products = [Product.FAN, Product.ROBOT, Product.SUPERSONIC, Product.VACUUM, Product.ZONE]
 
     global MOTORS
 
@@ -137,17 +137,17 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
 
-            installation.current_state = State.INTERACTIVE
+            installation.start_interactive()
 
-            if State(installation.current_state()) == State.OFF:
+            if installation.current_state() == State.OFF:
                 # OFF
                 off()
 
-            elif State(installation.current_state()) == State.DEMO:
+            elif installation.current_state() == State.DEMO:
                 # DEMO
                 demo_mode()
 
-            elif State(installation.current_state()) == State.INTERACTIVE:
+            elif installation.current_state() == State.INTERACTIVE:
                 # INTERACTIVE
                 interactive_mode()
 
