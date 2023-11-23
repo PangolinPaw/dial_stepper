@@ -34,7 +34,7 @@ def dial_smooting(dial, signal):
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
     the changes before they're used as signals for motor movement'''
     dial['buffer'].append(signal)
-    
+
     if len(dial['buffer']) > SMOOTHING:
         del dial['buffer'][0]
         return sum(dial['buffer'])
@@ -101,7 +101,7 @@ def read_dials():
             dial_smooting(dials['b'], 0)
             dial_smooting(dials['c'], 0)
             counter = 0
-        
+
         for dial in dials:
             clk_state = GPIO.input(dials[dial]['clk'])
             dt_state = GPIO.input(dials[dial]['dt'])
@@ -123,7 +123,7 @@ def read_dials():
                             dials[dial]['motor'],
                             stepper.BACKWARD
                         )
-                
+
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
 

@@ -10,7 +10,7 @@ from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
-from motor.control import move_motor, read_dials, MOTORS
+from motor.control import set_motor, read_dials, MOTORS
 
 dial_values = {
     "a": 1,
@@ -19,12 +19,18 @@ dial_values = {
 }
 MOTORS_NP = np.array([0,0,0])
 
-Solutions = [None] * (len(Product) - 1)
+######## Motor positions for each solutions
+Solutions = [None] * (len(Product) + 1)
 Solutions[Product.FAN]          = np.array([0   ,0  ,0])
 Solutions[Product.ROBOT]        = np.array([50  ,0  ,0])
 Solutions[Product.SUPERSONIC]   = np.array([100 ,0  ,0])
 Solutions[Product.VACUUM]       = np.array([150 ,0  ,0])
 Solutions[Product.ZONE]         = np.array([175 ,0  ,0])
+
+######## Demo Mode Variables
+DEMO_INTERVAL_S = 15
+current_solution = Product.OFF
+demo_start_time = 0
 
 def convert_motors_to_np():
     # One rotation of the motor is 200
@@ -75,6 +81,31 @@ def check_solutions():
     else:
         set_lights(Product.NO_PRODUCT)
 
+def get_next_solution(current_solution):
+    next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
+    return next_solution
+
+def demo_mode():
+    new_time = time.time()
+
+    if(new_time - demo_start_time):
+        # Display next solution
+        set_lights(Product.NO_PRODUCT)
+        current_solution = get_next_solution()
+        motor_positions = Solutions[current_solution]
+        set_motor('a', motor_positions[0])
+        set_motor('b', motor_positions[1])
+        set_motor('c', motor_positions[2])
+        demo_start_time = new_time
+        set_lights(Product(current_solution))
+
+def interactive_mode():
+    convert_motors_to_np()
+    print(f'MOTORS values:   {MOTORS_NP}')
+    check_solutions()
+
+def off():
+    set_lights(Product.OFF)
 
 def main():  # Main function
     HOST, PORT = "localhost", 9999  # We have Raspberry PI with ID 92
@@ -106,20 +137,19 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
 
-            # if State(installation.current_state()) == State.OFF:
-            #     # OFF
-            #     pass
+            installation.current_state = State.INTERACTIVE
 
-            # elif State(installation.current_state()) == State.DEMO:
-            #     # DEMO
-            #     pass
+            if State(installation.current_state()) == State.OFF:
+                # OFF
+                off()
 
-            # elif State(installation.current_state()) == State.INTERACTIVE:
-            #     # INTERACTIVE
+            elif State(installation.current_state()) == State.DEMO:
+                # DEMO
+                demo_mode()
 
-            convert_motors_to_np()
-            print(f'MOTORS values:   {MOTORS_NP}')
-            check_solutions()
+            elif State(installation.current_state()) == State.INTERACTIVE:
+                # INTERACTIVE
+                interactive_mode()
 
             time.sleep(0.2)
     except KeyboardInterrupt:

@@ -4,11 +4,12 @@ import neopixel
 from enum import Enum
 
 
-from light.image_convertor import fan_array, robot_array, zone_array, vacuum_array, supersonic_array, all_white_array
+from light.image_convertor import fan_array, robot_array, zone_array, vacuum_array, supersonic_array, all_white_array, off_array
 
 LED_COUNT = 225
 
 class Product(Enum):
+	OFF = 0
 	NO_PRODUCT = 1
 	FAN = 2
 	ROBOT = 3
@@ -30,7 +31,9 @@ def test_sequence():
 		time.sleep(0.25)
 
 def set_lights(state):
-	if state == Product.NO_PRODUCT:
+	if state == Product.OFF:
+		display_product(off_array)
+	elif state == Product.NO_PRODUCT:
 		display_product(all_white_array)
 	elif state == Product.FAN:
 		display_product(fan_array)

@@ -7,7 +7,7 @@ LED_COUNT = 225  # For a 15x15 matrix
 # Assuming LED_COUNT is the total number of LEDs
 
 def convert_image(path):
-        
+
     # Read the image and resize it
     img = cv2.imread(path, cv2.IMREAD_ANYCOLOR)
     resized_img = cv2.resize(img, (15, 15))
@@ -39,3 +39,4 @@ supersonic_array = convert_image("./light/Dilated/supersonic.jpeg")
 vacuum_array = convert_image("./light/Dilated/vacuum.jpeg")
 zone_array = convert_image("./light/Dilated/zone.jpeg")
 all_white_array = np.ones((LED_COUNT, 3), dtype=int)
+off_array = np.zeros((LED_COUNT, 3), dtype=int)
