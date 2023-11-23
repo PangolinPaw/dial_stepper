@@ -32,15 +32,15 @@ def test_sequence():
 def set_lights(state):
 	if state == Product.NO_PRODUCT:
 		display_product(all_white_array)
-	if state == Product.FAN:
+	elif state == Product.FAN:
 		display_product(fan_array)
-	if state == Product.ROBOT:
+	elif state == Product.ROBOT:
 		display_product(robot_array)
-	if state == Product.ZONE:
+	elif state == Product.ZONE:
 		display_product(zone_array)
-	if state == Product.VACUUM:
+	elif state == Product.VACUUM:
 		display_product(vacuum_array)
-	if state == Product.SUPERSONIC:
+	elif state == Product.SUPERSONIC:
 		display_product(supersonic_array)
 
 
