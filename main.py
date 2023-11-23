@@ -117,7 +117,7 @@ def main():  # Main function
             print(f'MOTORS values:   {MOTORS_NP}')
             get_distance_to_solutions()
             
-            # update_lights(val_tuple)
+            # set_lights(products[0])
             # update_motors(val_tuple)
             #fuzz_app.update_position(val_tuple)
             
