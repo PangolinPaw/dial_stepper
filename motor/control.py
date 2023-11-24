@@ -80,7 +80,7 @@ def move_motor(motor_name, motor, direction):
     change = 0
     for x in range(RATIO):
         motor.onestep(
-            direction=direction, style=stepper.SINGLE
+            direction=direction, style=stepper.DOUBLE
         )
         change += 1
         time.sleep(0.02)
