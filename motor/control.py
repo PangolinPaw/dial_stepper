@@ -168,6 +168,11 @@ def set_motors(motor_positions):
     set_motor('b', motor_positions[1])
     set_motor('c', motor_positions[2])
 
+def release_all():
+    kit.stepper1.release()
+    kit.stepper2.release()
+    kit2.stepper1.release()
+
 
 if __name__ == '__main__':
     read_dials()

@@ -10,8 +10,8 @@ from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
-from motor.control import set_motors, read_dials, MOTORS
 from playsound import playsound
+from motor.control import set_motors, read_dials, MOTORS, release_all
 
 dial_values = {
     "a": 1,
@@ -180,6 +180,7 @@ def main():  # Main function
             time.sleep(0.2)
     except KeyboardInterrupt:
         print("Shutting down")
+        release_all()
 
 if __name__ == '__main__':
     main()
