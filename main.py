@@ -64,8 +64,6 @@ def solution_distance(current_position, solution):
     distances = circular_distance(current_position, solution)
     return np.sum(distances)
 
-<<<<<<< HEAD
-=======
 def get_distance_to_solutions():
     distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
     distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
@@ -81,7 +79,6 @@ sound_solutions[Product.ZONE.value]         = 'zone_trimmed.wav' # Jake Dyson Au
 sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
 
 
->>>>>>> 068c69d (audio might work)
 def check_solutions():
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
