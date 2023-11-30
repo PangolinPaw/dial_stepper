@@ -62,12 +62,6 @@ def solution_distance(current_position, solution):
     distances = circular_distance(current_position, solution)
     return np.sum(distances)
 
-def get_distance_to_solutions():
-    distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
-    distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
-    print(f'Distance to robot:   {distance_to_robot}')
-    print(f'Distance to zone:   {distance_to_zone}')
-
 def check_solutions():
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         set_lights(Product.FAN)
@@ -136,14 +130,8 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-            
-            get_distance_to_solutions()
 
             interactive_mode()
-            
-            # set_lights(products[0])
-            # update_motors(val_tuple)
-            #fuzz_app.update_position(val_tuple)
 
             time.sleep(0.2)
     except KeyboardInterrupt:
