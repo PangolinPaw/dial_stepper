@@ -99,6 +99,8 @@ def move_motor(motor_name, motor, direction):
         )
         change += 1
         time.sleep(0.02)
+    if direction == stepper.BACKWARD:
+        change = 0 - change
     new_position = MOTORS[motor_name]['position'] + change
     MOTORS[motor_name]['position'] = new_position % 400
 
