@@ -136,20 +136,14 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-
-            installation.start_interactive()
-
-            if installation.current_state() == State.OFF:
-                # OFF
-                off()
-
-            elif installation.current_state() == State.DEMO:
-                # DEMO
-                demo_mode()
-
-            elif installation.current_state() == State.INTERACTIVE:
-                # INTERACTIVE
-                interactive_mode()
+            
+            convert_motors_to_np()
+            print(f'MOTORS values:   {MOTORS_NP}')
+            get_distance_to_solutions()
+            
+            # set_lights(products[0])
+            # update_motors(val_tuple)
+            #fuzz_app.update_position(val_tuple)
 
             time.sleep(0.2)
     except KeyboardInterrupt:
