@@ -9,7 +9,7 @@ from messages import State
 from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
-from playsound import playsound
+# from playsound import playsound
 from motor.control import set_motors, read_dials, MOTORS, release_all
 
 dial_values = {
@@ -84,37 +84,37 @@ def check_solutions():
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
             set_lights(Product.FAN)
-            playsound(sound_solutions[Product.FAN.value])
+            # playsound(sound_solutions[Product.FAN.value])
             current_solution = Product.FAN
 
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ROBOT:
             set_lights(Product.ROBOT)
-            playsound(sound_solutions[Product.ROBOT.value])
+            # playsound(sound_solutions[Product.ROBOT.value])
             current_solution = Product.ROBOT
 
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.SUPERSONIC:
             set_lights(Product.SUPERSONIC)
-            playsound(sound_solutions[Product.SUPERSONIC.value])
+            # playsound(sound_solutions[Product.SUPERSONIC.value])
             current_solution = Product.SUPERSONIC
 
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.VACUUM:
             set_lights(Product.VACUUM)
-            playsound(sound_solutions[Product.VACUUM.value])
+            # playsound(sound_solutions[Product.VACUUM.value])
             current_solution = Product.VACUUM
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ZONE:
             set_lights(Product.ZONE)
-            playsound(sound_solutions[Product.ZONE.value])
+            # playsound(sound_solutions[Product.ZONE.value])
             current_solution = Product.ZONE
     else:
         if current_solution != Product.NO_PRODUCT:
             set_lights(Product.NO_PRODUCT)
-            playsound(sound_solutions[Product.NO_PRODUCT.value])
+            # playsound(sound_solutions[Product.NO_PRODUCT.value])
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
