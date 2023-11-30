@@ -72,8 +72,8 @@ def get_distance_to_solutions():
 sound_solutions = [None] * (len(Product) + 1)
 sound_solutions[Product.FAN.value]          = 'fan_trimmed.wav' # You spin me right round
 sound_solutions[Product.ROBOT.value]        = 'robot_trimmed.wav' # Harder better faster stronger
-sound_solutions[Product.SUPERSONIC.value]   = 'supersonic_trimmed.wav' # In the air 
-sound_solutions[Product.VACUUM.value]       = 'vacuum_trimmed.wav' # 
+sound_solutions[Product.SUPERSONIC.value]   = 'supersonic_trimmed.wav' # In the air
+sound_solutions[Product.VACUUM.value]       = 'vacuum_trimmed.wav' #
 sound_solutions[Product.ZONE.value]         = 'zone_trimmed.wav' # Jake Dyson Audio
 sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
 
@@ -163,7 +163,6 @@ def main():  # Main function
     time.sleep(1)
 
     set_lights(Product.NO_PRODUCT)
-    set_motors([0,0,0])
     current_solution = Product.NO_PRODUCT
 
     # Keep the main thread alive to prevent the program from exiting

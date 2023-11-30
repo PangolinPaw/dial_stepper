@@ -86,6 +86,8 @@ def initialise():
             MOTORS['b']['position'] = int(last_positions[1])
             MOTORS['c']['position'] = int(last_positions[2])
 
+        set_motors([0,0,0])
+
     return dials
 
 def move_motor(motor_name, motor, direction):
