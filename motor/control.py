@@ -104,6 +104,14 @@ def move_motor(motor_name, motor, direction):
     new_position = MOTORS[motor_name]['position'] + change
     MOTORS[motor_name]['position'] = new_position % 400
 
+    # Write position to file
+    positions = [MOTORS['a']['position'],
+                 MOTORS['b']['position'],
+                 MOTORS['c']['position']]
+    with open(file_path, 'w') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(positions)
+
 def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
     & distance'''
@@ -158,14 +166,6 @@ def set_motor(motor_name, position):
             MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
             MOTORS[motor_name]['position'] -= 1
         time.sleep(0.01)
-
-    # Write position to file
-    positions = [MOTORS['a']['position'],
-                 MOTORS['b']['position'],
-                 MOTORS['c']['position']]
-    with open(file_path, 'w') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(positions)
 
 def set_motors(motor_positions):
     set_motor('a', motor_positions[0])
