@@ -137,9 +137,9 @@ def main():  # Main function
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
             
-            convert_motors_to_np()
-            print(f'MOTORS values:   {MOTORS_NP}')
             get_distance_to_solutions()
+
+            interactive_mode()
             
             # set_lights(products[0])
             # update_motors(val_tuple)
