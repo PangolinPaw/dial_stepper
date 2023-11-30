@@ -82,9 +82,9 @@ def initialise():
         with open(file_path, 'r') as csv_file:
             csv_reader = csv.reader(csv_file)
             last_positions = next(csv_reader)
-            MOTORS['a']['position'] = last_positions[0]
-            MOTORS['b']['position'] = last_positions[1]
-            MOTORS['c']['position'] = last_positions[2]
+            MOTORS['a']['position'] = int(last_positions[0])
+            MOTORS['b']['position'] = int(last_positions[1])
+            MOTORS['c']['position'] = int(last_positions[2])
 
     return dials
 
