@@ -144,4 +144,8 @@ def set_motor(motor_name, position):
 
 if __name__ == '__main__':
     read_dials()
-
+#    while True:
+#        set_motor('a', 200)
+#        time.sleep(2)
+#        set_motor('a', 1)
+#        time.sleep(2)
