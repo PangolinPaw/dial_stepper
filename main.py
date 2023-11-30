@@ -11,6 +11,7 @@ from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
 from motor.control import set_motors, read_dials, MOTORS
+from playsound import playsound
 
 dial_values = {
     "a": 1,
@@ -32,6 +33,7 @@ Solutions[Product.ZONE.value]         = np.array([300   ,0      ,200])
 DEMO_INTERVAL_S = 15
 current_solution = Product.OFF
 demo_start_time = 0
+
 
 def convert_motors_to_np():
     # One rotation of the motor is 400
@@ -62,19 +64,59 @@ def solution_distance(current_position, solution):
     distances = circular_distance(current_position, solution)
     return np.sum(distances)
 
+<<<<<<< HEAD
+=======
+def get_distance_to_solutions():
+    distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
+    distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
+    print(f'Distance to robot:   {distance_to_robot}')
+    print(f'Distance to zone:   {distance_to_zone}')
+
+sound_solutions = [None] * (len(Product) + 1)
+sound_solutions[Product.FAN.value]          = 'fan_trimmed.wav' # You spin me right round
+sound_solutions[Product.ROBOT.value]        = 'robot_trimmed.wav' # Harder better faster stronger
+sound_solutions[Product.SUPERSONIC.value]   = 'supersonic_trimmed.wav' # In the air 
+sound_solutions[Product.VACUUM.value]       = 'vacuum_trimmed.wav' # 
+sound_solutions[Product.ZONE.value]         = 'zone_trimmed.wav' # Jake Dyson Audio
+sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
+
+
+>>>>>>> 068c69d (audio might work)
 def check_solutions():
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
-        set_lights(Product.FAN)
+        if current_solution != Product.FAN:
+            set_lights(Product.FAN)
+            playsound(sound_solutions[Product.FAN.value])
+            current_solution = Product.FAN
+
+
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
-        set_lights(Product.ROBOT)
+        if current_solution != Product.ROBOT:
+            set_lights(Product.ROBOT)
+            playsound(sound_solutions[Product.ROBOT.value])
+            current_solution = Product.ROBOT
+
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
-        set_lights(Product.SUPERSONIC)
+        if current_solution != Product.SUPERSONIC:
+            set_lights(Product.SUPERSONIC)
+            playsound(sound_solutions[Product.SUPERSONIC.value])
+            current_solution = Product.SUPERSONIC
+
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
-        set_lights(Product.VACUUM)
+        if current_solution != Product.VACUUM:
+            set_lights(Product.VACUUM)
+            playsound(sound_solutions[Product.VACUUM.value])
+            current_solution = Product.VACUUM
+
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
-        set_lights(Product.ZONE)
+        if current_solution != Product.ZONE:
+            set_lights(Product.ZONE)
+            playsound(sound_solutions[Product.ZONE.value])
+            current_solution = Product.ZONE
     else:
-        set_lights(Product.NO_PRODUCT)
+        if current_solution != Product.NO_PRODUCT:
+            set_lights(Product.NO_PRODUCT)
+            playsound(sound_solutions[Product.NO_PRODUCT.value])
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
@@ -106,9 +148,7 @@ def main():  # Main function
     HOST, PORT = "localhost", 9999  # We have Raspberry PI with ID 92
     installation = Installation(HOST, PORT, id=92, init_state=State.INTERACTIVE)
 
-    # # ------- CORE 1 Audio -------
-    # fuzz_app = RadioFuzzApp(audio_clip_1, audio_clip_2, initial_position, solution1, solution2)
-    # fuzz_app.start()  # This starts the thread
+    # # ------- CORE 1 Dials -------
     dials_thread = Thread(target=read_dials)
     dials_thread.start()
 
@@ -117,15 +157,19 @@ def main():  # Main function
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 3 Lights --------
+    # --------- CORE 2 Lights --------
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
     global MOTORS
 
+<<<<<<< HEAD
     time.sleep(1)
 
     set_lights(Product.NO_PRODUCT)
     set_motors([0,0,0])
+=======
+    current_solution = Product.NO_PRODUCT
+>>>>>>> 068c69d (audio might work)
 
     # Keep the main thread alive to prevent the program from exiting
     try:

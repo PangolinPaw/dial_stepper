@@ -1,4 +1,0 @@
-PyQt5==5.15.4
-numpy==1.22.3
-SoundFile==0.10.3.post1
-sounddevice==0.4.3
