@@ -6,7 +6,6 @@ import numpy as np
 from installation import Installation
 from messages import State
 
-from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
