@@ -79,6 +79,8 @@ sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
 
 
 def check_solutions():
+    global current_solution
+
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
             set_lights(Product.FAN)
