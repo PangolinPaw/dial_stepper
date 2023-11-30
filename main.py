@@ -162,14 +162,11 @@ def main():  # Main function
     # motor_thread.start()
     global MOTORS
 
-<<<<<<< HEAD
     time.sleep(1)
 
     set_lights(Product.NO_PRODUCT)
     set_motors([0,0,0])
-=======
     current_solution = Product.NO_PRODUCT
->>>>>>> 068c69d (audio might work)
 
     # Keep the main thread alive to prevent the program from exiting
     try:
