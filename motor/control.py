@@ -25,7 +25,7 @@ MOTORS = {
 }
 
 # Ratio between dial steps & motor steps
-RATIO = 20
+RATIO = 5
 
 # Level of 'smoothing' applied to dial input
 SMOOTHING = 16
@@ -34,7 +34,7 @@ def dial_smooting(dial, signal):
     '''Dial can 'wobble' between clockwise & anticlockwise so this function smoothes
     the changes before they're used as signals for motor movement'''
     dial['buffer'].append(signal)
-    
+
     if len(dial['buffer']) > SMOOTHING:
         del dial['buffer'][0]
         return sum(dial['buffer'])
@@ -101,7 +101,7 @@ def read_dials():
             dial_smooting(dials['b'], 0)
             dial_smooting(dials['c'], 0)
             counter = 0
-        
+
         for dial in dials:
             clk_state = GPIO.input(dials[dial]['clk'])
             dt_state = GPIO.input(dials[dial]['dt'])
@@ -123,7 +123,7 @@ def read_dials():
                             dials[dial]['motor'],
                             stepper.BACKWARD
                         )
-                
+
                 print(f"[ {dial.upper()} ] : dial ={str(dials[dial]['position']).rjust(3)}\t motor ={str(MOTORS[dial]['position']).rjust(3)}")
             dials[dial]['clk_last_state'] = clk_state
 
@@ -141,6 +141,12 @@ def set_motor(motor_name, position):
             MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
             MOTORS[motor_name]['position'] -= 1
         time.sleep(0.01)
+
+def set_motors(motor_positions):
+    set_motor('a', motor_positions[0])
+    set_motor('b', motor_positions[1])
+    set_motor('c', motor_positions[2])
+
 
 if __name__ == '__main__':
     read_dials()
