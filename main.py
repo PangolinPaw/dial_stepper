@@ -20,13 +20,13 @@ dial_values = {
 MOTORS_NP = np.array([0,0,0])
 
 ######## Motor positions for each solutions
-POSITION_TOLERANCE = 5 # 5/200, 200 is a full rotation of the motor
+POSITION_TOLERANCE = 10 # 5/400, 400 is a full rotation of the motor
 Solutions = [None] * (len(Product) + 1)
-Solutions[Product.FAN.value]          = np.array([0   ,0  ,0])
-Solutions[Product.ROBOT.value]        = np.array([50  ,0  ,0])
-Solutions[Product.SUPERSONIC.value]   = np.array([100 ,0  ,0])
-Solutions[Product.VACUUM.value]       = np.array([150 ,0  ,0])
-Solutions[Product.ZONE.value]         = np.array([175 ,0  ,0])
+Solutions[Product.FAN.value]          = np.array([150   ,50     ,150])
+Solutions[Product.ROBOT.value]        = np.array([0     ,0      ,0])
+Solutions[Product.SUPERSONIC.value]   = np.array([0     ,250    ,0])
+Solutions[Product.VACUUM.value]       = np.array([0     ,100    ,50])
+Solutions[Product.ZONE.value]         = np.array([300   ,0      ,200])
 
 ######## Demo Mode Variables
 DEMO_INTERVAL_S = 15
@@ -34,12 +34,12 @@ current_solution = Product.OFF
 demo_start_time = 0
 
 def convert_motors_to_np():
-    # One rotation of the motor is 200
-    MOTORS_NP[0] = MOTORS['a']['position'] % 200
-    MOTORS_NP[1] = MOTORS['b']['position'] % 200
-    MOTORS_NP[2] = MOTORS['c']['position'] % 200
+    # One rotation of the motor is 400
+    MOTORS_NP[0] = MOTORS['a']['position'] % 400
+    MOTORS_NP[1] = MOTORS['b']['position'] % 400
+    MOTORS_NP[2] = MOTORS['c']['position'] % 400
 
-def circular_distance(pos1, pos2, max_value=200):
+def circular_distance(pos1, pos2, max_value=400):
     """
     Calculate the minimum circular distance between two positions.
 

@@ -25,7 +25,7 @@ MOTORS = {
 }
 
 # Ratio between dial steps & motor steps
-RATIO = 5
+RATIO = 50
 
 # Level of 'smoothing' applied to dial input
 SMOOTHING = 16
@@ -85,7 +85,7 @@ def move_motor(motor_name, motor, direction):
         change += 1
         time.sleep(0.02)
     new_position = MOTORS[motor_name]['position'] + change
-    MOTORS[motor_name]['position'] = new_position % 200
+    MOTORS[motor_name]['position'] = new_position % 400
 
 def read_dials():
     '''Receive signals from rotary encoders & determine rotation direction
