@@ -114,6 +114,7 @@ def check_solutions():
     else:
         if current_solution != Product.NO_PRODUCT:
             set_lights(Product.NO_PRODUCT)
+            current_solution = NO_PRODUCT
             # playsound(sound_solutions[Product.NO_PRODUCT.value])
 
 def get_next_solution(current_solution):
