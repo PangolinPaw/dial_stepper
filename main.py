@@ -120,9 +120,12 @@ def main():  # Main function
     # --------- CORE 3 Lights --------
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
-    set_lights(Product.NO_PRODUCT)
-
     global MOTORS
+
+    time.sleep(1)
+
+    set_lights(Product.NO_PRODUCT)
+    set_motors([0,0,0])
 
     # Keep the main thread alive to prevent the program from exiting
     try:

@@ -2,6 +2,10 @@ import time
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper
 from RPi import GPIO
+import csv
+import os
+
+file_path = 'last_positions.csv'
 
 # Initialise GPIO & motor controllers
 GPIO.setmode(GPIO.BCM)
@@ -73,6 +77,15 @@ def initialise():
         GPIO.setup(dials[dial]['clk'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(dials[dial]['dt'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         dials[dial]['clk_last_state'] = GPIO.input(dials[dial]['clk'])
+
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file)
+            last_positions = next(csv_reader)
+            MOTORS['a']['position'] = last_positions[0]
+            MOTORS['b']['position'] = last_positions[1]
+            MOTORS['c']['position'] = last_positions[2]
+
     return dials
 
 def move_motor(motor_name, motor, direction):
@@ -141,6 +154,14 @@ def set_motor(motor_name, position):
             MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
             MOTORS[motor_name]['position'] -= 1
         time.sleep(0.01)
+
+    # Write position to file
+    positions = [MOTORS['a']['position'],
+                 MOTORS['b']['position'],
+                 MOTORS['c']['position']]
+    with open(file_path, 'w') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(positions)
 
 def set_motors(motor_positions):
     set_motor('a', motor_positions[0])
