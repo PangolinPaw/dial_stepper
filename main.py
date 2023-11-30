@@ -80,6 +80,7 @@ sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
 
 def check_solutions():
     global current_solution
+    print(f'Current solution:  {current_solution}')
 
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
@@ -172,7 +173,7 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-            print(f'Current solution:  {current_solution}')
+
             interactive_mode()
 
             time.sleep(0.2)
