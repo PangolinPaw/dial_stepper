@@ -8,6 +8,7 @@ from messages import State
 
 from audio.audio import RadioFuzzApp
 from light.mock_lights import update_lights
+from light.lights import set_lights, Product
 
 from motor.control import move_motor, read_dials, MOTORS
 
@@ -88,16 +89,26 @@ def main():  # Main function
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 3 Motors --------
+    # --------- CORE 3 Lights --------
     # motor_thread = Thread(target=move_motor)
     # motor_thread.start()
+    set_lights(Product.NO_PRODUCT)
+    products = [Product.FAN, Product.ROBOT, Product.SUPERSONIC, Product.VACUUM, Product.ZONE]
 
     global MOTORS
     
-
+    counter = 0
+    product_i = 0
     # Keep the main thread alive to prevent the program from exiting
     try:
         while True:
+            counter += 1
+            if counter == 20:
+                set_lights(products[product_i % len(products)])
+                product_i += 1
+                counter = 0
+
+
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
@@ -106,7 +117,7 @@ def main():  # Main function
             print(f'MOTORS values:   {MOTORS_NP}')
             get_distance_to_solutions()
             
-            # update_lights(val_tuple)
+            # set_lights(products[0])
             # update_motors(val_tuple)
             #fuzz_app.update_position(val_tuple)
             
