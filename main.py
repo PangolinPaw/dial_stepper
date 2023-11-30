@@ -114,7 +114,7 @@ def check_solutions():
     else:
         if current_solution != Product.NO_PRODUCT:
             set_lights(Product.NO_PRODUCT)
-            current_solution = NO_PRODUCT
+            current_solution = Product.NO_PRODUCT
             # playsound(sound_solutions[Product.NO_PRODUCT.value])
 
 def get_next_solution(current_solution):
@@ -172,7 +172,7 @@ def main():  # Main function
             os.system('clear')
             print('--------')
             print(f'Installation state: {State(installation.current_state()).name}')
-
+            print(f'Current solution:  {current_solution}')
             interactive_mode()
 
             time.sleep(0.2)
