@@ -13,6 +13,8 @@ from light.lights import set_lights, Product
 # from playsound import playsound
 from motor.control import set_motors, read_dials, MOTORS, release_all
 
+import subprocess
+
 dial_values = {
     "a": 1,
     "b": 2,
@@ -34,6 +36,10 @@ DEMO_INTERVAL_S = 15
 current_solution = Product.OFF
 demo_start_time = 0
 
+def run_music_subprocess():
+    # Replace the command with your own
+    command = ["source", "/home/raspberry/Desktop/env/bin/activate", "&&", "/usr/bin/python", "/home/raspberry/Desktop/dial_stepper/dial_stepper/audio/test.py"]
+    subprocess.run(command)
 
 def convert_motors_to_np():
     # One rotation of the motor is 400
@@ -156,9 +162,10 @@ def main():  # Main function
     server_thread.daemon = True
     server_thread.start()
 
-    # --------- CORE 2 Lights --------
-    # motor_thread = Thread(target=move_motor)
-    # motor_thread.start()
+    # --------- CORE 3 Music --------
+    music_thread = Thread(target=run_music_subprocess)
+    music_thread.start()
+
     global MOTORS
 
     time.sleep(1)
