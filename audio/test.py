@@ -1,6 +1,10 @@
 import vlc
 import os
 import csv
+import sys
+import time
+
+sys.path.insert(1, '.')
 
 from light.lights import Product
 
@@ -30,14 +34,21 @@ def switch_track(current_player, new_product):
 if __name__ == '__main__':
     # Start playing the first track
     current_solution = Product.ZONE
+    solution = current_solution
     current_player = play_track(Product.ZONE)
 
-    while True:
-        if os.path.exists('current_solution.csv'):
-            with open('current_solution.csv', 'r') as csv_file:
-                csv_reader = csv.reader(csv_file)
-                solution = next(csv_reader)[0]
+    time.sleep(1)
 
-                if solution != current_solution:
-                    current_solution = solution
-                    current_player = switch_track(current_player, Product(solution))
+    while True:
+        try:
+            if os.path.exists('current_solution.csv'):
+                with open('current_solution.csv', 'r') as csv_file:
+                    csv_reader = csv.reader(csv_file)
+                    solution = Product(int((next(csv_reader))[0]))
+        except:
+            pass
+
+        if solution != current_solution:
+            print("Changing music to {}".format(solution))
+            current_solution = solution
+            current_player = switch_track(current_player, solution)

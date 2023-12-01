@@ -73,7 +73,7 @@ def get_distance_to_solutions():
 def write_current_solution():
     with open('current_solution.csv', 'w') as csv_file:
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(current_solution.value)
+        csv_writer.writerow([current_solution.value])
 
 def check_solutions():
     global current_solution
