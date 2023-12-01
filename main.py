@@ -67,22 +67,28 @@ def write_current_solution(current_solution):
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow([current_solution.value])
 
-def write_to_file():
+def lights_and_file():
 
     while True:
         time.sleep(0.5)
 
         if current_solution == Product.FAN:
+            set_lights(Product.FAN)
             write_current_solution(Product.FAN)
         elif current_solution == Product.ROBOT:
+            set_lights(Product.ROBOT)
             write_current_solution(Product.ROBOT)
         elif current_solution == Product.SUPERSONIC:
+            set_lights(Product.SUPERSONIC)
             write_current_solution(Product.SUPERSONIC)
         elif current_solution == Product.VACUUM:
+            set_lights(Product.VACUUM)
             write_current_solution(Product.VACUUM)
         elif current_solution == Product.ZONE:
+            set_lights(Product.ZONE)
             write_current_solution(Product.ZONE)
         else:
+            set_lights(Product.NO_PRODUCT)
             write_current_solution(Product.NO_PRODUCT)
 
 def check_solutions():
@@ -167,14 +173,11 @@ def main():  # Main function
     dials_thread.start()
 
     # ------- CORE 2 Start the network server -------
-    light_thread = Thread(target=update_lights)
+    light_thread = Thread(target=lights_and_file)
     light_thread.start()
 
-    # --------- CORE 3 Music --------
-    write_to_file_thread = Thread(target=write_to_file)
-    write_to_file_thread.start()
-
     global MOTORS
+    global current_solution
 
     time.sleep(1)
 
