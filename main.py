@@ -68,32 +68,30 @@ def write_current_solution(current_solution):
         csv_writer.writerow([current_solution.value])
 
 def write_to_file():
+    global current_solution
+    global MOTORS_NP
+    global Solutions
+    global POSITION_TOLERANCE
 
     time.sleep(0.5)
 
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
-        if current_solution != Product.FAN:
-            write_current_solution(Product.FAN)
+        write_current_solution(Product.FAN)
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
-        if current_solution != Product.ROBOT:
-            write_current_solution(Product.ROBOT)
+        write_current_solution(Product.ROBOT)
 
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
-        if current_solution != Product.SUPERSONIC:
-            write_current_solution(Product.SUPERSONIC)
+        write_current_solution(Product.SUPERSONIC)
 
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
-        if current_solution != Product.VACUUM:
-            write_current_solution(Product.VACUUM)
+        write_current_solution(Product.VACUUM)
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
-        if current_solution != Product.ZONE:
-            write_current_solution(Product.ZONE)
+        write_current_solution(Product.ZONE)
 
     else:
-        if current_solution != Product.NO_PRODUCT:
-            write_current_solution(Product.NO_PRODUCT)
+        write_current_solution(Product.NO_PRODUCT)
 
 def check_solutions():
     global current_solution
