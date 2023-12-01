@@ -163,8 +163,8 @@ def main():  # Main function
     server_thread.start()
 
     # --------- CORE 3 Music --------
-    music_thread = Thread(target=run_music_subprocess)
-    music_thread.start()
+    # music_thread = Thread(target=run_music_subprocess)
+    # music_thread.start()
 
     global MOTORS
 

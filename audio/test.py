@@ -3,13 +3,19 @@ import os
 import csv
 import sys
 import time
-
-sys.path.insert(1, '.')
-
-from light.lights import Product
+from enum import Enum
 
 # List of .wav files
 relative_path = os.path.abspath(os.path.dirname(__file__))
+
+class Product(Enum):
+    OFF = 0
+    NO_PRODUCT = 1
+    FAN = 2
+    ROBOT = 3
+    SUPERSONIC = 4
+    VACUUM = 5
+    ZONE = 6
 
 sound_solutions = [None] * (len(Product) + 1)
 sound_solutions[Product.FAN.value]          = 'fan_trimmed.wav' # You spin me right round
@@ -36,13 +42,13 @@ if __name__ == '__main__':
     current_solution = Product.ZONE
     solution = current_solution
     current_player = play_track(Product.ZONE)
-
+    print(relative_path + '/../' + 'current_solution.csv')
     time.sleep(1)
 
     while True:
         try:
-            if os.path.exists('current_solution.csv'):
-                with open('current_solution.csv', 'r') as csv_file:
+            if os.path.exists(relative_path + '/../' + 'current_solution.csv'):
+                with open(relative_path + '/../' + 'current_solution.csv', 'r') as csv_file:
                     csv_reader = csv.reader(csv_file)
                     solution = Product(int((next(csv_reader))[0]))
         except:
@@ -52,3 +58,5 @@ if __name__ == '__main__':
             print("Changing music to {}".format(solution))
             current_solution = solution
             current_player = switch_track(current_player, solution)
+
+        time.sleep(1)
