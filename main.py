@@ -123,16 +123,18 @@ def get_next_solution(current_solution):
     return next_solution
 
 def demo_mode():
+    global demo_start_time
+    global current_solution
     new_time = time.time()
 
     if(new_time - demo_start_time):
         # Display next solution
         demo_start_time = new_time
         set_lights(Product.NO_PRODUCT)
-        current_solution = get_next_solution()
-        motor_positions = Solutions[current_solution]
+        current_solution = get_next_solution(current_solution)
+        motor_positions = Solutions[current_solution.value]
         set_motors(motor_positions)
-        set_lights(Product(current_solution))
+        set_lights(Product(current_solution.value))
 
 def interactive_mode():
     convert_motors_to_np()
@@ -175,11 +177,12 @@ def main():  # Main function
             print(f'Installation state: {State(installation.current_state()).name}')
 
             interactive_mode()
+            # demo_mode()
 
             time.sleep(0.2)
     except KeyboardInterrupt:
         print("Shutting down")
-        release_all()
+        # release_all()
 
 if __name__ == '__main__':
     main()

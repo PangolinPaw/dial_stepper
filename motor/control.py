@@ -160,16 +160,18 @@ def set_motor(motor_name, position):
     global MOTORS
     while position != MOTORS[motor_name]['position']:
         if position > MOTORS[motor_name]['position']:
-            MOTORS[motor_name]['motor'].onestep(direction=stepper.FORWARD)
+            MOTORS[motor_name]['motor'].onestep(direction=stepper.FORWARD, style=stepper.DOUBLE)
             MOTORS[motor_name]['position'] += 1
         else:
-            MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD)
+            MOTORS[motor_name]['motor'].onestep(direction=stepper.BACKWARD, style=stepper.DOUBLE)
             MOTORS[motor_name]['position'] -= 1
         time.sleep(0.01)
 
 def set_motors(motor_positions):
     set_motor('a', motor_positions[0])
+    time.sleep(1)
     set_motor('b', motor_positions[1])
+    time.sleep(1)
     set_motor('c', motor_positions[2])
 
 def release_all():
