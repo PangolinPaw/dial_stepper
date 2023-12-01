@@ -1,6 +1,7 @@
 from threading import Thread
 import time
 import os
+import csv
 import numpy as np
 
 from installation import Installation
@@ -69,14 +70,10 @@ def get_distance_to_solutions():
     print(f'Distance to robot:   {distance_to_robot}')
     print(f'Distance to zone:   {distance_to_zone}')
 
-sound_solutions = [None] * (len(Product) + 1)
-sound_solutions[Product.FAN.value]          = 'fan_trimmed.wav' # You spin me right round
-sound_solutions[Product.ROBOT.value]        = 'robot_trimmed.wav' # Harder better faster stronger
-sound_solutions[Product.SUPERSONIC.value]   = 'supersonic_trimmed.wav' # In the air
-sound_solutions[Product.VACUUM.value]       = 'vacuum_trimmed.wav' #
-sound_solutions[Product.ZONE.value]         = 'zone_trimmed.wav' # Jake Dyson Audio
-sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
-
+def write_current_solution():
+    with open('current_solution.csv', 'w') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(current_solution.value)
 
 def check_solutions():
     global current_solution
@@ -85,38 +82,38 @@ def check_solutions():
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
             set_lights(Product.FAN)
-            # playsound(sound_solutions[Product.FAN.value])
             current_solution = Product.FAN
-
+            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ROBOT:
             set_lights(Product.ROBOT)
-            # playsound(sound_solutions[Product.ROBOT.value])
             current_solution = Product.ROBOT
+            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.SUPERSONIC:
             set_lights(Product.SUPERSONIC)
-            # playsound(sound_solutions[Product.SUPERSONIC.value])
             current_solution = Product.SUPERSONIC
+            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.VACUUM:
             set_lights(Product.VACUUM)
-            # playsound(sound_solutions[Product.VACUUM.value])
             current_solution = Product.VACUUM
+            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ZONE:
             set_lights(Product.ZONE)
-            # playsound(sound_solutions[Product.ZONE.value])
             current_solution = Product.ZONE
+            write_current_solution()
+
     else:
         if current_solution != Product.NO_PRODUCT:
             set_lights(Product.NO_PRODUCT)
             current_solution = Product.NO_PRODUCT
-            # playsound(sound_solutions[Product.NO_PRODUCT.value])
+            write_current_solution()
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)

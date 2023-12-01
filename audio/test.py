@@ -1,35 +1,43 @@
 import vlc
-import time
 import os
+import csv
 
-#instance = vlc.Instance('--aout=alsa', '--alsa-audio-device=default')
-#player = instance.media_player_new()
-#media = instance.media_new("your-audio-file.wav")
-#player.set_media(media)
+from light.lights import Product
 
 # List of .wav files
 relative_path = os.path.abspath(os.path.dirname(__file__))
 
-tracks = ["zone_trimmed.wav", "robot_trimmed.wav", "supersonic_trimmed.wav"]  # Replace with your file names
+sound_solutions = [None] * (len(Product) + 1)
+sound_solutions[Product.FAN.value]          = 'fan_trimmed.wav' # You spin me right round
+sound_solutions[Product.ROBOT.value]        = 'robot_trimmed.wav' # Harder better faster stronger
+sound_solutions[Product.SUPERSONIC.value]   = 'supersonic_trimmed.wav' # In the air
+sound_solutions[Product.VACUUM.value]       = 'vacuum_trimmed.wav' #
+sound_solutions[Product.ZONE.value]         = 'zone_trimmed.wav' # Jake Dyson Audio
+sound_solutions[Product.NO_PRODUCT.value]   = 'radio.wav' # Jake Dyson Audio
 
 # Function to play a track
-def play_track(track):
-    player = vlc.MediaPlayer(relative_path + '/' + track)
+def play_track(product):
+    player = vlc.MediaPlayer(relative_path + '/' + sound_solutions[product.value])
     player.play()
     return player
 
 # Function to switch track
-def switch_track(current_player, new_track):
+def switch_track(current_player, new_product):
     if current_player.is_playing():
         current_player.stop()
-    return play_track(new_track)
+    return play_track(new_product)
 
-# Start playing the first track
-current_player = play_track(tracks[0])
+if __name__ == '__main__':
+    # Start playing the first track
+    current_solution = Product.ZONE
+    current_player = play_track(Product.ZONE)
 
-# Example: Switch to next track after 10 seconds
-time.sleep(10)
-current_player = switch_track(current_player, tracks[1])
+    while True:
+        if os.path.exists('current_solution.csv'):
+            with open('current_solution.csv', 'r') as csv_file:
+                csv_reader = csv.reader(csv_file)
+                solution = next(csv_reader)[0]
 
-time.sleep(10)
-# Add your logic to switch between tracks as needed
+                if solution != current_solution:
+                    current_solution = solution
+                    current_player = switch_track(current_player, Product(solution))
