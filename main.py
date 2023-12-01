@@ -7,13 +7,10 @@ import numpy as np
 from installation import Installation
 from messages import State
 
-from light.mock_lights import update_lights
 from light.lights import set_lights, Product
 
 # from playsound import playsound
-from motor.control import set_motors, read_dials, MOTORS, release_all
-
-import subprocess
+from motor.control import set_motors, read_dials, MOTORS
 
 dial_values = {
     "a": 1,
@@ -35,11 +32,6 @@ Solutions[Product.ZONE.value]         = np.array([300   ,0      ,200])
 DEMO_INTERVAL_S = 15
 current_solution = Product.OFF
 demo_start_time = 0
-
-def run_music_subprocess():
-    # Replace the command with your own
-    command = ["source", "/home/raspberry/Desktop/env/bin/activate", "&&", "/usr/bin/python", "/home/raspberry/Desktop/dial_stepper/dial_stepper/audio/test.py"]
-    subprocess.run(command)
 
 def convert_motors_to_np():
     # One rotation of the motor is 400
@@ -70,16 +62,38 @@ def solution_distance(current_position, solution):
     distances = circular_distance(current_position, solution)
     return np.sum(distances)
 
-def get_distance_to_solutions():
-    distance_to_robot = solution_distance(MOTORS_NP, robot_solution)
-    distance_to_zone = solution_distance(MOTORS_NP, zone_solution)
-    print(f'Distance to robot:   {distance_to_robot}')
-    print(f'Distance to zone:   {distance_to_zone}')
-
-def write_current_solution():
+def write_current_solution(current_solution):
     with open('current_solution.csv', 'w') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow([current_solution.value])
+
+def write_to_file():
+
+    time.sleep(0.5)
+
+    if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
+        if current_solution != Product.FAN:
+            write_current_solution(Product.FAN)
+
+    elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
+        if current_solution != Product.ROBOT:
+            write_current_solution(Product.ROBOT)
+
+    elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
+        if current_solution != Product.SUPERSONIC:
+            write_current_solution(Product.SUPERSONIC)
+
+    elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
+        if current_solution != Product.VACUUM:
+            write_current_solution(Product.VACUUM)
+
+    elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
+        if current_solution != Product.ZONE:
+            write_current_solution(Product.ZONE)
+
+    else:
+        if current_solution != Product.NO_PRODUCT:
+            write_current_solution(Product.NO_PRODUCT)
 
 def check_solutions():
     global current_solution
@@ -89,37 +103,31 @@ def check_solutions():
         if current_solution != Product.FAN:
             set_lights(Product.FAN)
             current_solution = Product.FAN
-            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ROBOT:
             set_lights(Product.ROBOT)
             current_solution = Product.ROBOT
-            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.SUPERSONIC:
             set_lights(Product.SUPERSONIC)
             current_solution = Product.SUPERSONIC
-            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.VACUUM:
             set_lights(Product.VACUUM)
             current_solution = Product.VACUUM
-            write_current_solution()
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ZONE:
             set_lights(Product.ZONE)
             current_solution = Product.ZONE
-            write_current_solution()
 
     else:
         if current_solution != Product.NO_PRODUCT:
             set_lights(Product.NO_PRODUCT)
             current_solution = Product.NO_PRODUCT
-            write_current_solution()
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
@@ -163,8 +171,8 @@ def main():  # Main function
     server_thread.start()
 
     # --------- CORE 3 Music --------
-    # music_thread = Thread(target=run_music_subprocess)
-    # music_thread.start()
+    write_to_file_thread = Thread(target=write_to_file)
+    write_to_file_thread.start()
 
     global MOTORS
 
