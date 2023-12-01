@@ -69,27 +69,24 @@ def write_current_solution(current_solution):
 
 def lights_and_file():
 
-    while True:
-        time.sleep(0.5)
-
-        if current_solution == Product.FAN:
-            set_lights(Product.FAN)
-            write_current_solution(Product.FAN)
-        elif current_solution == Product.ROBOT:
-            set_lights(Product.ROBOT)
-            write_current_solution(Product.ROBOT)
-        elif current_solution == Product.SUPERSONIC:
-            set_lights(Product.SUPERSONIC)
-            write_current_solution(Product.SUPERSONIC)
-        elif current_solution == Product.VACUUM:
-            set_lights(Product.VACUUM)
-            write_current_solution(Product.VACUUM)
-        elif current_solution == Product.ZONE:
-            set_lights(Product.ZONE)
-            write_current_solution(Product.ZONE)
-        else:
-            set_lights(Product.NO_PRODUCT)
-            write_current_solution(Product.NO_PRODUCT)
+    if current_solution == Product.FAN:
+        set_lights(Product.FAN)
+        write_current_solution(Product.FAN)
+    elif current_solution == Product.ROBOT:
+        set_lights(Product.ROBOT)
+        write_current_solution(Product.ROBOT)
+    elif current_solution == Product.SUPERSONIC:
+        set_lights(Product.SUPERSONIC)
+        write_current_solution(Product.SUPERSONIC)
+    elif current_solution == Product.VACUUM:
+        set_lights(Product.VACUUM)
+        write_current_solution(Product.VACUUM)
+    elif current_solution == Product.ZONE:
+        set_lights(Product.ZONE)
+        write_current_solution(Product.ZONE)
+    else:
+        set_lights(Product.NO_PRODUCT)
+        write_current_solution(Product.NO_PRODUCT)
 
 def check_solutions():
     global current_solution
@@ -119,22 +116,19 @@ def check_solutions():
         if current_solution != Product.NO_PRODUCT:
             current_solution = Product.NO_PRODUCT
 
-def update_lights():
-    while True:
-        time.sleep(0.5)
-
-        if current_solution == Product.FAN:
-            set_lights(Product.FAN)
-        elif current_solution == Product.ROBOT:
-            set_lights(Product.ROBOT)
-        elif current_solution == Product.SUPERSONIC:
-            set_lights(Product.SUPERSONIC)
-        elif current_solution == Product.VACUUM:
-            set_lights(Product.VACUUM)
-        elif current_solution == Product.ZONE:
-            set_lights(Product.ZONE)
-        else:
-            set_lights(Product.NO_PRODUCT)
+# def update_lights():
+#     if current_solution == Product.FAN:
+#         set_lights(Product.FAN)
+#     elif current_solution == Product.ROBOT:
+#         set_lights(Product.ROBOT)
+#     elif current_solution == Product.SUPERSONIC:
+#         set_lights(Product.SUPERSONIC)
+#     elif current_solution == Product.VACUUM:
+#         set_lights(Product.VACUUM)
+#     elif current_solution == Product.ZONE:
+#         set_lights(Product.ZONE)
+#     else:
+#         set_lights(Product.NO_PRODUCT)
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
@@ -158,6 +152,7 @@ def interactive_mode():
     convert_motors_to_np()
     print(f'MOTORS values:   {MOTORS_NP}')
     check_solutions()
+    lights_and_file()
 
 def off():
     motor_positions = Solutions[Product.FAN]
@@ -171,10 +166,6 @@ def main():  # Main function
     # # ------- CORE 1 Dials -------
     dials_thread = Thread(target=read_dials)
     dials_thread.start()
-
-    # ------- CORE 2 Start the network server -------
-    light_thread = Thread(target=lights_and_file)
-    light_thread.start()
 
     global MOTORS
     global current_solution
