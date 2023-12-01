@@ -72,21 +72,16 @@ def write_to_file():
     while True:
         time.sleep(0.5)
 
-        if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
+        if current_solution == Product.FAN:
             write_current_solution(Product.FAN)
-
-        elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
+        elif current_solution == Product.ROBOT:
             write_current_solution(Product.ROBOT)
-
-        elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
+        elif current_solution == Product.SUPERSONIC:
             write_current_solution(Product.SUPERSONIC)
-
-        elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
+        elif current_solution == Product.VACUUM:
             write_current_solution(Product.VACUUM)
-
-        elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
+        elif current_solution == Product.ZONE:
             write_current_solution(Product.ZONE)
-
         else:
             write_current_solution(Product.NO_PRODUCT)
 
@@ -96,33 +91,44 @@ def check_solutions():
 
     if np.allclose(MOTORS_NP, Solutions[Product.FAN.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.FAN:
-            set_lights(Product.FAN)
             current_solution = Product.FAN
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ROBOT.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ROBOT:
-            set_lights(Product.ROBOT)
             current_solution = Product.ROBOT
 
     elif np.allclose(MOTORS_NP, Solutions[Product.SUPERSONIC.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.SUPERSONIC:
-            set_lights(Product.SUPERSONIC)
             current_solution = Product.SUPERSONIC
 
     elif np.allclose(MOTORS_NP, Solutions[Product.VACUUM.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.VACUUM:
-            set_lights(Product.VACUUM)
             current_solution = Product.VACUUM
 
     elif np.allclose(MOTORS_NP, Solutions[Product.ZONE.value], atol= POSITION_TOLERANCE):
         if current_solution != Product.ZONE:
-            set_lights(Product.ZONE)
             current_solution = Product.ZONE
 
     else:
         if current_solution != Product.NO_PRODUCT:
-            set_lights(Product.NO_PRODUCT)
             current_solution = Product.NO_PRODUCT
+
+def update_lights():
+    while True:
+        time.sleep(0.5)
+
+        if current_solution == Product.FAN:
+            set_lights(Product.FAN)
+        elif current_solution == Product.ROBOT:
+            set_lights(Product.ROBOT)
+        elif current_solution == Product.SUPERSONIC:
+            set_lights(Product.SUPERSONIC)
+        elif current_solution == Product.VACUUM:
+            set_lights(Product.VACUUM)
+        elif current_solution == Product.ZONE:
+            set_lights(Product.ZONE)
+        else:
+            set_lights(Product.NO_PRODUCT)
 
 def get_next_solution(current_solution):
     next_solution = Product((current_solution.value + 1) % (len(Product) - 2) + 2)
@@ -161,9 +167,8 @@ def main():  # Main function
     dials_thread.start()
 
     # ------- CORE 2 Start the network server -------
-    server_thread = Thread(target=installation.serve_forever)
-    server_thread.daemon = True
-    server_thread.start()
+    light_thread = Thread(target=update_lights)
+    light_thread.start()
 
     # --------- CORE 3 Music --------
     write_to_file_thread = Thread(target=write_to_file)
